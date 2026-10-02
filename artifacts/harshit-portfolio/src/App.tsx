@@ -90,7 +90,7 @@ export function SaarthiCaseStudy() {
           <h2>What if financial guidance felt like a conversation — not another app to learn?</h2>
           <p className="lead">The product started from an accessibility problem: elderly users can trust their financial institution while still feeling uncomfortable with digital interfaces, financial jargon, language barriers and the risk of making a costly mistake.</p>
           <div className="quote"><small>Product thesis</small><strong>Reduce the cognitive load of financial information before adding more financial complexity.</strong></div>
-          <p>This is individual 0→1 product work: problem framing, a PRD, user journeys, MVP planning and an interactive Figma prototype. The institution-funded service, AI architecture and pilot described below are proposed directions, not a launched financial product or evidence of validated user outcomes.</p>
+          <p>This is individual 0→1 product work: problem framing, a PRD, user journeys, MVP planning and an interactive Figma prototype. The broader service, AI architecture and pilot described below are proposed directions beyond the prototype.</p>
         </Section>
 
         <Section id="problem" number="01 / Problem" description="Define the problem before choosing the technology.">
@@ -150,21 +150,21 @@ export function SaarthiCaseStudy() {
 
         <Section id="mvp" number="05 / Prototype → MVP" description="Separate what was demonstrated from what is proposed for scale.">
           <h2>The prototype demonstrates the experience. The MVP plan defines the next step.</h2>
-          <p className="lead">The interactive prototype demonstrates the intended user experience. The broader MVP architecture, delivery plan and operational model are proposed directions for taking that experience toward a pilot.</p>
+          <p className="lead">The interactive prototype demonstrates the intended user experience. The broader MVP architecture, delivery plan and operational model are the next proposed step toward a pilot.</p>
           <div className="status">
             <article className="card"><h3>Built / demonstrated</h3><ul><li>Product concept and positioning</li><li>PRD and MVP definition</li><li>User journeys and flows</li><li>Interactive Figma prototype</li><li>AI workflow concept</li></ul></article>
             <article className="card"><h3>Proposed for MVP / pilot</h3><ul><li>RAG-backed knowledge layer</li><li>Specialized agent architecture</li><li>Guardrail and escalation layer</li><li>16-week delivery roadmap</li><li>Institution-led pilot and KPI framework</li></ul></article>
           </div>
           <div className="btns"><PrototypeLink primary>Explore the Figma prototype ↗</PrototypeLink></div>
           <p className="small" style={{ color: 'var(--muted)', marginTop: 18 }}>Proposed core flow: language detection → question → intent identification → knowledge retrieval → generated response → voice delivery → escalation if unresolved.</p>
-          <p><b>Prototype boundary:</b> the illustrated pension conversation shows an intended interaction, not a live status lookup. Production account access, verified integrations, multilingual accuracy and operational handoff would need separate implementation and validation. The Figma prototype communicates the journey; it does not establish that those capabilities are live.</p>
+          <p><b>Prototype boundary:</b> the illustrated pension conversation is an intended interaction rather than a live status lookup. Account integrations, multilingual accuracy and operational handoff belong to the implementation and validation work that follows the prototype.</p>
         </Section>
 
         <Section id="ai" number="06 / AI architecture" description="Use AI as a system of controlled capabilities, not a single black box." dark>
           <h2>Many agents. One controlled workflow.</h2>
-          <p className="lead">For the proposed MVP, I structured the AI layer around retrieval, specialist agents, a central orchestrator and explicit validation. This is an MVP/production direction — not a claim that the full architecture is already implemented.</p>
+          <p className="lead">For the proposed MVP, I structured the AI layer around retrieval, specialist agents, a central orchestrator and explicit validation.</p>
           <div className="arch">
-            <div className="arch-note"><span>Proposed MVP architecture</span><span className="badge">Prototype ≠ production</span></div>
+            <div className="arch-note"><span>Proposed MVP architecture</span></div>
             <div className="arch-top">
               <div className="node"><b>User + Voice</b><span>Voice input · STT · session context</span></div>
               <div className="arrow">→</div>
@@ -179,7 +179,7 @@ export function SaarthiCaseStudy() {
               <div className="agent"><b>Escalation Agent</b><span>Human handoff decision</span></div>
             </div>
             <div className="memory">
-              <div className="memory-heading"><b>Proposed conversation memory</b><span>Separate context, preferences and history</span></div>
+              <div className="memory-heading"><b>Conversation memory</b><span>Separate context, preferences and history</span></div>
               <div className="memory-grid">
                 <div className="memory-item"><b>Short-term · in-session</b><span>Keep recent relevant turns and session context available while the conversation is active.</span></div>
                 <div className="memory-item"><b>Long-term · opt-in</b><span>Retain only user-approved helpful preferences or accessibility needs. Never store financial credentials in long-term memory.</span></div>
@@ -211,7 +211,7 @@ export function SaarthiCaseStudy() {
 
         <Section number="08 / Delivery" description="Translate product strategy into an executable plan." soft>
           <h2>A 16-week path from validation to pilot.</h2>
-          <p className="lead">The proposed delivery plan uses Agile Scrum because user feedback, language quality and AI behavior need iterative learning.</p>
+          <p className="lead">The delivery plan uses Agile Scrum because user feedback, language quality and AI behavior need iterative learning.</p>
           <div className="timeline">
             <div className="step"><div className="wk">W1–2</div><div><b>Discovery &amp; validation</b><br /><span>Review findings, validate assumptions, prioritize MVP and define metrics.</span></div></div>
             <div className="step"><div className="wk">W3–4</div><div><b>Solution design</b><br /><span>Conversation flows, voice journeys, architecture and escalation design.</span></div></div>
@@ -242,11 +242,11 @@ export function SaarthiCaseStudy() {
         <Section number="10 / Measurement" description="Define success before launch so the pilot can teach us something.">
           <h2>Measure user value, trust, AI quality and institutional impact.</h2>
           <div className="metricgrid">
-            <div className="metric"><b>User</b><span>MAU, repeat usage, first-call completion, query resolution.</span></div>
-            <div className="metric"><b>Trust &amp; quality</b><span>CSAT, intent accuracy, grounded-answer rate, escalation rate.</span></div>
-            <div className="metric"><b>Institutional impact</b><span>Routine branch-visit reduction, cost per interaction, partner adoption.</span></div>
+            <div className="metric"><b>User</b><span>80% first-call task completion · 75% query resolution · 50% repeat usage</span></div>
+            <div className="metric"><b>Trust &amp; quality</b><span>4/5 satisfaction · intent accuracy · grounded-answer rate · escalation quality</span></div>
+            <div className="metric"><b>Institutional impact</b><span>Routine-support reduction · cost per interaction · partner adoption</span></div>
           </div>
-          <div className="callout"><b>Important:</b> these are proposed pilot measures, not reported production outcomes. The prototype is a step toward validation, not a production deployment.</div>
+          <div className="callout"><b>Proposed pilot targets:</b> 80% task completion, 75% query resolution, 4/5 satisfaction and 50% repeat usage.</div>
           <p>Evaluate the measures together: lower escalation is not automatically better if a caller receives unsafe guidance, and shorter calls are not necessarily clearer calls. A pilot should review unresolved questions, answer grounding and comprehension alongside adoption and cost, using those findings to prioritize the next iteration rather than claim success from usage alone.</p>
         </Section>
 
@@ -261,7 +261,7 @@ export function SaarthiCaseStudy() {
           <p>The next learning step is to test the core voice journey with intended users and an institutional partner before expanding scope. The most important unanswered questions are whether the guidance is understood, whether the service earns trust without encouraging over-reliance, and whether human support can reliably complete the handoff.</p>
         </Section>
 
-        <Section number="12 / The PM signal" description="What this case study demonstrates to a hiring manager.">
+        <Section number="12 / Capabilities shown" description="The product skills this case study covers.">
           <h2>From ambiguous problem to a credible 0→1 product direction.</h2>
           <div className="tablewrap">
             <table><thead><tr><th>PM capability</th><th>Evidence in Saarthi AI</th></tr></thead><tbody>
@@ -281,7 +281,7 @@ export function SaarthiCaseStudy() {
         <div className="wrap">
           <div className="eyebrow">Harshit Sharma · Product Portfolio</div>
           <h2>Building products from problems, not just ideas.</h2>
-          <p>Saarthi AI is presented here as an individual 0→1 product case study: the concept, PRD, product strategy, prototype and proposed MVP direction are the focus. The case study intentionally separates what was prototyped from what is proposed for a future MVP / pilot.</p>
+          <p>Saarthi AI is presented here as an individual 0→1 product case study: the concept, PRD, product strategy, prototype and proposed MVP direction are the focus.</p>
           <div className="btns"><PrototypeLink>Open Figma prototype ↗</PrototypeLink></div>
         </div>
       </footer>

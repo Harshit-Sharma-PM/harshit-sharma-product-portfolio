@@ -26,7 +26,7 @@ function PortfolioHome() {
           <h1>Harshit Sharma</h1>
           <div className="portfolio-intro">
             <p className="portfolio-role">Associate Digital Product Manager<br />American Express<br />Digital Products · Financial Services · Operations · Fintech · GenAI · Automation</p>
-            <p className="lead">I currently work as an Associate Digital Product Manager at American Express, working across digital products, financial services and customer operations. I bring 7+ years of experience building and improving customer and internal products.</p>
+            <p className="lead">I turn complex operational workflows into clearer, more reliable digital products, drawing on 7+ years of experience across financial services, customer operations and digital products. I also explore how GenAI and Agentic AI can make financial services easier to use.</p>
             <a className="text-link" href="#case-studies">Explore case studies <span aria-hidden="true">↓</span></a>
           </div>
           <div className="hero-index" aria-hidden="true"><span>01</span><i /><span>PRODUCT<br />PORTFOLIO</span></div>
@@ -40,7 +40,7 @@ function PortfolioHome() {
             </aside>
             <div className="about-main">
               <h2>My work spans product, financial services and customer operations.</h2>
-              <p className="about-copy">I’m an Associate Digital Product Manager at American Express, working at the intersection of digital products, financial services and customer operations. Across 7+ years in product delivery and customer-facing roles, I’ve learned to connect business requirements with the workflows people actually use — turning complex operational needs into clearer, more reliable digital experiences.</p>
+              <p className="about-copy">My product work sits at the intersection of digital products, financial services and customer operations. Across 7+ years in product delivery and customer-facing roles, I’ve learned to connect business requirements with the workflows people actually use — turning complex operational needs into clearer, more reliable digital experiences.</p>
               <p className="about-copy">My work spans multiple complex workflows and product areas, including CLIC, a global case-management platform. Credit Balance Refund (CBR), App Controls and Dispute Payment Management (DPM) are important examples within that broader work, not its full scope. I contribute to requirements discovery, workflow design, stakeholder alignment, backlog refinement and delivery, working with Product, Engineering and Business teams to clarify business rules, handle exceptions and improve usability.</p>
               <p className="about-copy">Quality is part of that product responsibility, not the whole of it. I have owned end-to-end UAT and supported CBR launches in France, Germany and Austria, connecting validation and release readiness with continuous workflow improvement. My individual Saarthi AI work extends this product thinking into discovery, PRDs, MVP prioritization, voice-first journeys and responsible AI design.</p>
               <div className="about-facts">
