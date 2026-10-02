@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "Harshit Sharma — Product Portfolio"
+description = "A shareable product portfolio presenting Saarthi AI, a voice-first financial inclusion case study that demonstrates 0-to-1 product strategy, AI product thinking, and execution."
+version = "1.0.0"
+id = "artifacts/harshit-portfolio"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 22529
+
+[services.development]
+run = "pnpm --filter @workspace/harshit-portfolio run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/harshit-portfolio", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/harshit-portfolio/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "22529"
+BASE_PATH = "/"
