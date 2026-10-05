@@ -23,4 +23,4 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           VECTORIZE_INDEX_NAME: ask-harshit-ai
-        run: node scripts/sync-ask-harshit-vectorize.mjs
+        run: npx --yes tsx scripts/sync-ask-harshit-vectorize.mjs
