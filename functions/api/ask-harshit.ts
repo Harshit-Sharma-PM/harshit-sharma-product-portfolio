@@ -223,7 +223,7 @@ ${question}`;
       { role: "system", content: "Ground every answer in the supplied portfolio context." },
       { role: "user", content: prompt },
     ],
-    max_tokens: 450,
+    max_completion_tokens: 1200,
   });
 
   const answer = extractAiText(result);
