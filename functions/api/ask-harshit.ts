@@ -84,47 +84,60 @@ async function semanticRetrieve(question: string, env: Env) {
 }
 
 function extractAiText(result: unknown) {
-  if (typeof result === "string" && result.trim()) return result.trim();
+  const seen = new Set<unknown>();
 
-  if (result && typeof result === "object") {
-    const value = result as {
-      response?: unknown;
-      choices?: Array<{
-        message?: { content?: unknown };
-        text?: unknown;
-      }>;
-    };
+  function findText(value: unknown, depth = 0): string | null {
+    if (depth > 6 || value == null || seen.has(value)) return null;
 
-    const content = value.choices?.[0]?.message?.content;
-    if (typeof content === "string" && content.trim()) return content.trim();
-
-    if (Array.isArray(content)) {
-      const text = content
-        .map((part) => {
-          if (typeof part === "string") return part;
-          if (part && typeof part === "object" && "text" in part) {
-            const partText = (part as { text?: unknown }).text;
-            return typeof partText === "string" ? partText : "";
-          }
-          return "";
-        })
-        .join("")
-        .trim();
-
-      if (text) return text;
+    if (typeof value === "string") {
+      const text = value.trim();
+      return text || null;
     }
 
-    const completionText = value.choices?.[0]?.text;
-    if (typeof completionText === "string" && completionText.trim()) {
-      return completionText.trim();
+    if (typeof value !== "object") return null;
+    seen.add(value);
+
+    if (Array.isArray(value)) {
+      const parts = value
+        .map((item) => findText(item, depth + 1))
+        .filter((item): item is string => Boolean(item));
+      return parts.length ? parts.join("") : null;
     }
 
-    if (typeof value.response === "string" && value.response.trim()) {
-      return value.response.trim();
+    const object = value as Record<string, unknown>;
+
+    // Prefer the standard OpenAI-compatible chat-completion shape.
+    const choices = object.choices;
+    if (Array.isArray(choices) && choices.length) {
+      const firstChoice = choices[0];
+      if (firstChoice && typeof firstChoice === "object") {
+        const choice = firstChoice as Record<string, unknown>;
+        const message = choice.message;
+        if (message && typeof message === "object") {
+          const messageObject = message as Record<string, unknown>;
+          const messageText = findText(messageObject.content, depth + 1);
+          if (messageText) return messageText;
+        }
+
+        const choiceText = findText(choice.text, depth + 1);
+        if (choiceText) return choiceText;
+      }
     }
+
+    // Workers AI / model wrappers can nest the completion under response.
+    const responseText = findText(object.response, depth + 1);
+    if (responseText) return responseText;
+
+    // Some wrappers expose the generated text under result/output/content.
+    for (const key of ["result", "output", "content", "text"]) {
+      const nestedText = findText(object[key], depth + 1);
+      if (nestedText) return nestedText;
+    }
+
+    return null;
   }
 
-  return "I couldn't generate a grounded answer right now. Please try again.";
+  return findText(result) ?? "I couldn't generate a grounded answer right now. Please try again.";
 }
 
 export async function answerAskHarshit(request: Request, env: Env) {
