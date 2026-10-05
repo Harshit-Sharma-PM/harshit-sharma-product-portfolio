@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - feature/ask-harshit-ai
     paths:
       - "artifacts/harshit-portfolio/src/ask-ai-knowledge.ts"
       - "scripts/sync-ask-harshit-vectorize.mjs"
