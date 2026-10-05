@@ -53,29 +53,29 @@ async function semanticRetrieve(question: string, env: Env) {
 
   try {
     const embedding = await env.AI.run("@cf/baai/bge-small-en-v1.5", {
-    text: [question],
-  });
+      text: [question],
+    });
 
-  const vector =
-    typeof embedding === "object" &&
-    embedding !== null &&
-    "data" in embedding &&
-    Array.isArray((embedding as { data?: unknown }).data)
-      ? ((embedding as { data: number[][] }).data?.[0] ?? [])
-      : [];
+    const vector =
+      typeof embedding === "object" &&
+      embedding !== null &&
+      "data" in embedding &&
+      Array.isArray((embedding as { data?: unknown }).data)
+        ? ((embedding as { data: number[][] }).data?.[0] ?? [])
+        : [];
 
-  if (!vector.length) return null;
+    if (!vector.length) return null;
 
-  const result = await env.VECTORIZE.query(vector, {
-    topK: 4,
-    returnMetadata: "all",
-  });
+    const result = await env.VECTORIZE.query(vector, {
+      topK: 4,
+      returnMetadata: "all",
+    });
 
     return (result.matches ?? [])
       .map((match) => {
-      const chunk = askHarshitKnowledge.find((item) => item.id === match.id);
-      return chunk ? { chunk, score: match.score ?? 0 } : null;
-    })
+        const chunk = askHarshitKnowledge.find((item) => item.id === match.id);
+        return chunk ? { chunk, score: match.score ?? 0 } : null;
+      })
       .filter((item): item is { chunk: KnowledgeChunk; score: number } => Boolean(item));
   } catch {
     // If the optional semantic layer is unavailable, fall back to deterministic retrieval.
@@ -83,6 +83,49 @@ async function semanticRetrieve(question: string, env: Env) {
   }
 }
 
+function extractAiText(result: unknown) {
+  if (typeof result === "string" && result.trim()) return result.trim();
+
+  if (result && typeof result === "object") {
+    const value = result as {
+      response?: unknown;
+      choices?: Array<{
+        message?: { content?: unknown };
+        text?: unknown;
+      }>;
+    };
+
+    const content = value.choices?.[0]?.message?.content;
+    if (typeof content === "string" && content.trim()) return content.trim();
+
+    if (Array.isArray(content)) {
+      const text = content
+        .map((part) => {
+          if (typeof part === "string") return part;
+          if (part && typeof part === "object" && "text" in part) {
+            const partText = (part as { text?: unknown }).text;
+            return typeof partText === "string" ? partText : "";
+          }
+          return "";
+        })
+        .join("")
+        .trim();
+
+      if (text) return text;
+    }
+
+    const completionText = value.choices?.[0]?.text;
+    if (typeof completionText === "string" && completionText.trim()) {
+      return completionText.trim();
+    }
+
+    if (typeof value.response === "string" && value.response.trim()) {
+      return value.response.trim();
+    }
+  }
+
+  return "I couldn't generate a grounded answer right now. Please try again.";
+}
 
 export async function answerAskHarshit(request: Request, env: Env) {
   if (request.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
@@ -170,10 +213,7 @@ ${question}`;
     max_tokens: 450,
   });
 
-  const answer =
-    typeof result === "object" && result !== null && "response" in result
-      ? String((result as { response: unknown }).response)
-      : String(result);
+  const answer = extractAiText(result);
 
   return json({
     answer,
