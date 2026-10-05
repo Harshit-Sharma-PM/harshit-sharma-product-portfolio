@@ -1,4 +1,4 @@
-import { askHarshitKnowledge, type KnowledgeChunk } from "../../../artifacts/harshit-portfolio/src/ask-ai-knowledge";
+import { askHarshitKnowledge, type KnowledgeChunk } from "../../artifacts/harshit-portfolio/src/ask-ai-knowledge";
 
 type AiRuntime = {
   run(model: string, input: Record<string, unknown>): Promise<unknown>;
