@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, type ReactNode } from "react";
 import { Bot, Send, Sparkles, UserRound } from "lucide-react";
 
 type Message = {
@@ -6,6 +6,67 @@ type Message = {
   content: string;
   sources?: Array<{ title: string; section?: string }>;
 };
+
+function renderInlineMarkdown(text: string): ReactNode[] {
+  const parts = text.split(/(\\*\\*[^*]+\\*\\*)/g);
+
+  return parts.map((part, index) => {
+    if (part.startsWith("**") && part.endsWith("**")) {
+      return <strong key={index}>{part.slice(2, -2)}</strong>;
+    }
+    return <span key={index}>{part}</span>;
+  });
+}
+
+function renderMarkdown(text: string) {
+  const lines = text.split(/\\r?\\n/);
+  const nodes: ReactNode[] = [];
+  let bullets: string[] = [];
+
+  const flushBullets = () => {
+    if (!bullets.length) return;
+    nodes.push(
+      <ul key={`list-${nodes.length}`}>
+        {bullets.map((item, index) => (
+          <li key={index}>{renderInlineMarkdown(item)}</li>
+        ))}
+      </ul>,
+    );
+    bullets = [];
+  };
+
+  lines.forEach((line, index) => {
+    const trimmed = line.trim();
+
+    if (!trimmed) {
+      flushBullets();
+      return;
+    }
+
+    const bullet = trimmed.match(/^[-*]\\s+(.+)$/);
+    if (bullet) {
+      bullets.push(bullet[1]);
+      return;
+    }
+
+    flushBullets();
+
+    const heading = trimmed.match(/^#{1,3}\\s+(.+)$/);
+    if (heading) {
+      nodes.push(
+        <h4 key={`heading-${index}`}>{renderInlineMarkdown(heading[1])}</h4>,
+      );
+      return;
+    }
+
+    nodes.push(
+      <p key={`paragraph-${index}`}>{renderInlineMarkdown(trimmed)}</p>,
+    );
+  });
+
+  flushBullets();
+  return nodes;
+}
 
 const starterQuestions = [
   "What kind of Product Manager am I?",
