@@ -1,0 +1,13 @@
+# Cloudflare Pages configuration for Ask Harshit AI
+# The production binding can also be configured in the Cloudflare dashboard.
+# Keep secrets out of this file.
+
+name = "harshit-sharma-product-portfolio"
+compatibility_date = "2026-10-01"
+
+[ai]
+binding = "AI"
+
+[[vectorize]]
+binding = "VECTORIZE"
+index_name = "ask-harshit-ai"
