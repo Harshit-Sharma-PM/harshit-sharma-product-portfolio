@@ -52,7 +52,7 @@ async function semanticRetrieve(question: string, env: Env) {
   if (!env.AI || !env.VECTORIZE) return null;
 
   try {
-    const embedding = await env.AI.run("@cf/baai/bge-base-en-v1.5", {
+    const embedding = await env.AI.run("@cf/baai/bge-small-en-v1.5", {
     text: [question],
   });
 
