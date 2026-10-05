@@ -1,5 +1,6 @@
 import { Link, Route, Switch, useParams } from 'wouter';
 import { caseStudies } from './case-studies/registry';
+import { AskHarshitAI } from './components/AskHarshitAI';
 
 function PortfolioNavigation() {
   return (
@@ -9,6 +10,7 @@ function PortfolioNavigation() {
         <div className="navlinks">
           <a href="/#about">About</a>
           <a href="/#case-studies">Case studies</a>
+          <a href="/#ask-harshit">Ask Harshit AI</a>
           <a href="https://www.linkedin.com/in/harshit-sharma-bb5a61286" target="_blank" rel="noopener noreferrer">LinkedIn ↗</a>
         </div>
       </div>
@@ -100,6 +102,8 @@ function PortfolioHome() {
             </div>
           </div>
         </section>
+
+        <AskHarshitAI />
       </main>
       <footer className="portfolio-footer">
         <div className="wrap footer-row">
