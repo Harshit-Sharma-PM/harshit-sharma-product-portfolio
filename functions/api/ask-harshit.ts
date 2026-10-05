@@ -114,6 +114,20 @@ function extractAiText(result: unknown) {
 
     const object = value as Record<string, unknown>;
 
+    // GLM can return visible text as an array of content blocks.
+    if (Array.isArray(object.content)) {
+      const contentParts = object.content
+        .map((part) => {
+          if (typeof part === "string") return part;
+          if (!part || typeof part !== "object") return null;
+          const block = part as Record<string, unknown>;
+          return typeof block.text === "string" ? block.text : null;
+        })
+        .filter((part): part is string => Boolean(part?.trim()));
+
+      if (contentParts.length) return contentParts.join("");
+    }
+
     // Prefer the standard OpenAI-compatible chat-completion shape.
     const choices = object.choices;
     if (Array.isArray(choices) && choices.length) {
@@ -286,13 +300,30 @@ Current question:
 ${question}`;
 
 
-  const result = await env.AI.run("@cf/zai-org/glm-4.7-flash", {
-    messages: [
-      { role: "system", content: "Ground every answer in the supplied portfolio context." },
-      { role: "user", content: prompt },
-    ],
-    max_completion_tokens: 1200,
-  });
+  let result: unknown;
+
+  try {
+    result = await env.AI.run("@cf/zai-org/glm-4.7-flash", {
+      messages: [
+        { role: "system", content: "Ground every answer in the supplied portfolio context." },
+        { role: "user", content: prompt },
+      ],
+      // This assistant needs concise, useful answers rather than hidden chain-of-thought.
+      // GLM-4.7-Flash supports disabling thinking through chat_template_kwargs.
+      reasoning_effort: null,
+      chat_template_kwargs: { enable_thinking: false },
+      max_completion_tokens: 1200,
+    });
+  } catch {
+    return json({
+      answer: "I couldn't generate a grounded answer right now. Please try again.",
+      sources: retrieved.map(({ chunk }) => ({
+        title: chunk.title,
+        section: chunk.section,
+      })),
+      generationError: true,
+    });
+  }
 
   const answer = extractAiText(result);
 
