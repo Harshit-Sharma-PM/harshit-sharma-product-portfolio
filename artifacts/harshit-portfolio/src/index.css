@@ -417,7 +417,31 @@ a:focus-visible, button:focus-visible { outline: 3px solid #bb7d31; outline-offs
 .ask-ai-message.user .ask-ai-avatar { background: var(--ink); color: var(--paper); }
 .ask-ai-bubble { padding: 12px 14px; background: #eceae2; }
 .ask-ai-message.user .ask-ai-bubble { background: var(--ink); color: var(--paper); }
-.ask-ai-bubble p { margin: 0; font-size: 13px; line-height: 1.55; white-space: pre-wrap; }
+.ask-ai-content {
+  font-size: 13px;
+  line-height: 1.6;
+}
+.ask-ai-content p {
+  margin: 0 0 9px;
+}
+.ask-ai-content p:last-child { margin-bottom: 0; }
+.ask-ai-content strong { font-weight: 700; }
+.ask-ai-content h4 {
+  margin: 0 0 8px;
+  font-size: 13px;
+  line-height: 1.4;
+}
+.ask-ai-content ul {
+  margin: 5px 0 10px;
+  padding-left: 19px;
+}
+.ask-ai-content li {
+  margin: 3px 0;
+}
+.ask-ai-message.user .ask-ai-content p,
+.ask-ai-message.user .ask-ai-content li {
+  color: var(--paper);
+}
 .ask-ai-sources {
   display: flex;
   flex-wrap: wrap;
