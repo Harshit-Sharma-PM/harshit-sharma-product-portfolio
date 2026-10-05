@@ -67,16 +67,18 @@ async function semanticRetrieve(question: string, env: Env) {
     if (!vector.length) return null;
 
     const result = await env.VECTORIZE.query(vector, {
-      topK: 4,
+      topK: 6,
       returnMetadata: "all",
     });
 
     return (result.matches ?? [])
       .map((match) => {
         const chunk = askHarshitKnowledge.find((item) => item.id === match.id);
-        return chunk ? { chunk, score: match.score ?? 0 } : null;
+        return chunk ? { chunk, semanticScore: match.score ?? 0 } : null;
       })
-      .filter((item): item is { chunk: KnowledgeChunk; score: number } => Boolean(item));
+      .filter(
+        (item): item is { chunk: KnowledgeChunk; semanticScore: number } => Boolean(item),
+      );
   } catch {
     // If the optional semantic layer is unavailable, fall back to deterministic retrieval.
     return null;
@@ -163,15 +165,51 @@ export async function answerAskHarshit(request: Request, env: Env) {
     return json({ error: "Please enter a question up to 500 characters." }, { status: 400 });
   }
 
-  let retrieved = await semanticRetrieve(question, env);
+  const semanticMatches = await semanticRetrieve(question, env);
 
-  if (!retrieved?.length) {
-    retrieved = askHarshitKnowledge
-      .map((chunk) => ({ chunk, score: lexicalScore(question, chunk) }))
-      .filter((entry) => entry.score > 0)
-      .sort((a, b) => b.score - a.score)
-      .slice(0, 4);
+  const lexicalMatches = askHarshitKnowledge
+    .map((chunk) => ({ chunk, lexicalScore: lexicalScore(question, chunk) }))
+    .filter((entry) => entry.lexicalScore > 0);
+
+  const candidateMap = new Map<string, {
+    chunk: KnowledgeChunk;
+    semanticScore: number;
+    lexicalScore: number;
+  }>();
+
+  for (const match of semanticMatches ?? []) {
+    candidateMap.set(match.chunk.id, {
+      chunk: match.chunk,
+      semanticScore: match.semanticScore,
+      lexicalScore: lexicalScore(question, match.chunk),
+    });
   }
+
+  for (const match of lexicalMatches) {
+    const existing = candidateMap.get(match.chunk.id);
+    if (existing) {
+      existing.lexicalScore = match.lexicalScore;
+    } else {
+      candidateMap.set(match.chunk.id, {
+        chunk: match.chunk,
+        semanticScore: 0,
+        lexicalScore: match.lexicalScore,
+      });
+    }
+  }
+
+  const candidates = Array.from(candidateMap.values());
+  const maxLexicalScore = Math.max(1, ...candidates.map((candidate) => candidate.lexicalScore));
+
+  const retrieved = candidates
+    .map((candidate) => ({
+      chunk: candidate.chunk,
+      score:
+        candidate.semanticScore * 0.7 +
+        (candidate.lexicalScore / maxLexicalScore) * 0.3,
+    }))
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 3);
 
   if (!retrieved.length) {
     return json({
@@ -211,6 +249,13 @@ Rules:
 - If the context is insufficient, say so.
 - Keep the response concise and useful to a recruiter, hiring manager, or product peer.
 - Use plain language.
+- Prefer 2–4 short paragraphs or 3–6 bullets, depending on the question.
+- Do not repeat the question.
+- Do not dump all retrieved context; select only the evidence needed to answer.
+- Use Markdown sparingly: short bold labels and bullet points are welcome.
+- For broad experience questions, lead with a 1–2 sentence summary, then mention the most relevant examples.
+- For a specific case study, explain the problem, solution, and Harshit’s role without turning it into a full PRD.
+- For skills questions, group skills into a few useful categories rather than listing everything.
 
 Portfolio context:
 ${context}
