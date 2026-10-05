@@ -74,7 +74,8 @@ async function main() {
     const batch = embeddings.slice(i, i + 1000);
     await cf(endpoint, {
       method: "POST",
-      body: JSON.stringify(batch),
+      headers: { "Content-Type": "application/x-ndjson" },
+      body: batch.map((vector) => JSON.stringify(vector)).join("\n") + "\n",
     });
     console.log(`Upserted ${Math.min(i + batch.length, embeddings.length)}/${embeddings.length}`);
   }
