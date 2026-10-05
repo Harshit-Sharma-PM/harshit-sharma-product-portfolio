@@ -7,7 +7,7 @@ on:
       - feature/ask-harshit-ai
     paths:
       - "artifacts/harshit-portfolio/src/ask-ai-knowledge.ts"
-      - "scripts/sync-ask-harshit-vectorize.mjs"
+      - "scripts/sync-ask-harshit-vectorize.ts"
       - ".github/workflows/sync-ask-harshit-ai.yml"
   workflow_dispatch:
 
@@ -23,4 +23,4 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           VECTORIZE_INDEX_NAME: ask-harshit-ai
-        run: npx --yes tsx scripts/sync-ask-harshit-vectorize.mjs
+        run: npx --yes tsx scripts/sync-ask-harshit-vectorize.ts
