@@ -79,7 +79,7 @@ export function AskHarshitAI() {
     {
       role: "assistant",
       content:
-        "Hi, I’m Ask Harshit AI. Ask me about Harshit’s product work, case studies, skills, or experience. I’ll use the portfolio knowledge base and cite the relevant source.",
+        "Hi, I’m Ask Harshit AI. Ask me anything about Harshit’s product experience, case studies, skills, or product thinking. I’ll answer from his portfolio and point to the relevant evidence.",
     },
   ]);
   const [input, setInput] = useState("");
@@ -99,7 +99,13 @@ export function AskHarshitAI() {
       const response = await fetch("/api/ask-harshit", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ question }),
+        body: JSON.stringify({
+          question,
+          history: messages
+            .filter((message) => message.role === "user")
+            .slice(-3)
+            .map(({ role, content }) => ({ role, content })),
+        }),
       });
 
       const data = (await response.json()) as {
@@ -169,12 +175,13 @@ export function AskHarshitAI() {
                   {message.role === "assistant" ? <Bot size={16} /> : <UserRound size={16} />}
                 </div>
                 <div className="ask-ai-bubble">
-                  <p>{message.content}</p>
+                  <div className="ask-ai-content">{renderMarkdown(message.content)}</div>
                   {message.sources?.length ? (
                     <div className="ask-ai-sources">
+                      <span className="ask-ai-sources-label">Grounded in</span>
                       {message.sources.map((source, sourceIndex) => (
-                        <span key={sourceIndex}>
-                          Source: {source.title}{source.section ? ` · ${source.section}` : ""}
+                        <span className="ask-ai-source-chip" key={sourceIndex}>
+                          {source.title}
                         </span>
                       ))}
                     </div>
