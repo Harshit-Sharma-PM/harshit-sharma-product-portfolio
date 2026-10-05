@@ -19,7 +19,7 @@ function renderInlineMarkdown(text: string): ReactNode[] {
 }
 
 function renderMarkdown(text: string) {
-  const lines = text.split(/\\r?\\n/);
+  const lines = text.split(/\r?\n/);
   const nodes: ReactNode[] = [];
   let bullets: string[] = [];
 
@@ -43,7 +43,7 @@ function renderMarkdown(text: string) {
       return;
     }
 
-    const bullet = trimmed.match(/^[-*]\\s+(.+)$/);
+    const bullet = trimmed.match(/^[-*]\s+(.+)$/);
     if (bullet) {
       bullets.push(bullet[1]);
       return;
@@ -51,7 +51,7 @@ function renderMarkdown(text: string) {
 
     flushBullets();
 
-    const heading = trimmed.match(/^#{1,3}\\s+(.+)$/);
+    const heading = trimmed.match(/^#{1,3}\s+(.+)$/);
     if (heading) {
       nodes.push(
         <h4 key={`heading-${index}`}>{renderInlineMarkdown(heading[1])}</h4>,
