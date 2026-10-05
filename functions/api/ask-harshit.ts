@@ -15,6 +15,10 @@ type RequestBody = {
   question?: string;
 };
 
+const requestWindow = new Map<string, { count: number; resetAt: number }>();
+const REQUEST_LIMIT = 10;
+const WINDOW_MS = 60_000;
+
 const corsHeaders = {
   "access-control-allow-origin": "*",
   "access-control-allow-headers": "content-type",
@@ -47,7 +51,8 @@ function lexicalScore(question: string, chunk: KnowledgeChunk) {
 async function semanticRetrieve(question: string, env: Env) {
   if (!env.AI || !env.VECTORIZE) return null;
 
-  const embedding = await env.AI.run("@cf/baai/bge-base-en-v1.5", {
+  try {
+    const embedding = await env.AI.run("@cf/baai/bge-base-en-v1.5", {
     text: [question],
   });
 
@@ -66,17 +71,34 @@ async function semanticRetrieve(question: string, env: Env) {
     returnMetadata: "all",
   });
 
-  return (result.matches ?? [])
-    .map((match) => {
+    return (result.matches ?? [])
+      .map((match) => {
       const chunk = askHarshitKnowledge.find((item) => item.id === match.id);
       return chunk ? { chunk, score: match.score ?? 0 } : null;
     })
-    .filter((item): item is { chunk: KnowledgeChunk; score: number } => Boolean(item));
+      .filter((item): item is { chunk: KnowledgeChunk; score: number } => Boolean(item));
+  } catch {
+    // If the optional semantic layer is unavailable, fall back to deterministic retrieval.
+    return null;
+  }
 }
+
 
 export async function answerAskHarshit(request: Request, env: Env) {
   if (request.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
   if (request.method !== "POST") return json({ error: "Method not allowed" }, { status: 405 });
+
+  const clientId = request.headers.get("CF-Connecting-IP") || "anonymous";
+  const now = Date.now();
+  const window = requestWindow.get(clientId);
+  if (!window || now >= window.resetAt) {
+    requestWindow.set(clientId, { count: 1, resetAt: now + WINDOW_MS });
+  } else {
+    if (window.count >= REQUEST_LIMIT) {
+      return json({ error: "Too many requests. Please try again in a minute." }, { status: 429 });
+    }
+    window.count += 1;
+  }
 
   const body = (await request.json().catch(() => ({}))) as RequestBody;
   const question = body.question?.trim();
