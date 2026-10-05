@@ -35,7 +35,7 @@ async function main() {
     {
       method: "POST",
       headers,
-      body: JSON.stringify({ name: indexName, config: { dimensions: 768, metric: "cosine" } }),
+      body: JSON.stringify({ name: indexName, config: { dimensions: 384, metric: "cosine" } }),
     },
   );
   if (!createResponse.ok && createResponse.status !== 409) {
@@ -47,7 +47,7 @@ async function main() {
 
   const embeddings = [];
   for (const chunk of askHarshitKnowledge) {
-    const result = await cf("/ai/run/@cf/baai/bge-base-en-v1.5", {
+    const result = await cf("/ai/run/@cf/baai/bge-small-en-v1.5", {
       method: "POST",
       body: JSON.stringify({ text: [`${chunk.title}. ${chunk.section || ""}. ${chunk.text}`] }),
     });
