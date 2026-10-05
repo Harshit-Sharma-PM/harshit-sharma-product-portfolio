@@ -27,15 +27,36 @@ The generation model is `@cf/zai-org/glm-4.7-flash`, selected because Cloudflare
 
 5. The assistant will work immediately with the deterministic retrieval fallback plus Workers AI generation.
 
-## Optional: enable semantic RAG with Vectorize
+## Semantic RAG with Vectorize
 
-Create a Vectorize index using the same embedding model dimension and metric required by your chosen setup. The repository code expects a binding named:
+Vectorize is the intended production retrieval layer for Ask Harshit AI. The repository already contains the binding configuration and a reproducible sync script.
+
+Create a Vectorize index named `ask-harshit-ai` using the embedding dimensions produced by `@cf/baai/bge-base-en-v1.5` and the metric supported by the current Cloudflare Vectorize setup. The Pages/Worker binding is named:
 
 `VECTORIZE`
 
-Then bind that index to the Pages project and redeploy.
+The knowledge base contains one vector per curated chunk. Vector IDs intentionally match the chunk IDs in `ask-ai-knowledge.ts`.
 
-For this small portfolio knowledge base, the index only needs one vector per knowledge chunk. Keep the vector IDs equal to the IDs in `ask-ai-knowledge.ts` so retrieval can map results back to source text.
+### Keep future edits automatic
+
+The repository includes `.github/workflows/sync-ask-harshit-ai.yml`. After the one-time GitHub secret setup below, changing `ask-ai-knowledge.ts` on `main` automatically regenerates embeddings and upserts the current knowledge base into Vectorize.
+
+GitHub Actions does not need a paid service for this small public-repository workflow. The workflow uses Cloudflare only for the embedding and Vectorize operations.
+
+### GitHub secrets
+
+Add these repository secrets once:
+
+- `CLOUDFLARE_ACCOUNT_ID`
+- `CLOUDFLARE_API_TOKEN`
+
+The API token should be restricted to the account and granted only the permissions needed by the sync workflow: **Workers AI - Read/Edit** and **Vectorize - Write**. Cloudflare documents these account permissions and API-token scopes. Do not put the token in source code. The token value is only stored in GitHub Actions secrets.
+
+### One-time index creation
+
+The index itself is created once. Cloudflare's Vectorize API requires **Vectorize Write** permission to create an index. After creation and binding, the GitHub workflow maintains its contents.
+
+This architecture means future portfolio edits do not require manually rebuilding the RAG index.
 
 ## Important security notes
 
