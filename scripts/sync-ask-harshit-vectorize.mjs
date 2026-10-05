@@ -29,6 +29,20 @@ async function cf(path: string, init: RequestInit = {}) {
 }
 
 async function main() {
+  console.log(`Ensuring Vectorize index "${indexName}" exists…`);
+  const createResponse = await fetch(
+    `https://api.cloudflare.com/client/v4/accounts/${accountId}/vectorize/v2/indexes`,
+    {
+      method: "POST",
+      headers,
+      body: JSON.stringify({ name: indexName, config: { dimensions: 768, metric: "cosine" } }),
+    },
+  );
+  if (!createResponse.ok && createResponse.status !== 409) {
+    const body = await createResponse.text();
+    throw new Error(`Could not create Vectorize index: ${createResponse.status} ${body}`);
+  }
+
   console.log(`Syncing ${askHarshitKnowledge.length} Ask Harshit AI chunks…`);
 
   const embeddings = [];
