@@ -8,7 +8,7 @@ type Message = {
 };
 
 function renderInlineMarkdown(text: string): ReactNode[] {
-  const parts = text.split(/(\\*\\*[^*]+\\*\\*)/g);
+  const parts = text.split(/(\*\*[^*]+\*\*)/g);
 
   return parts.map((part, index) => {
     if (part.startsWith("**") && part.endsWith("**")) {
