@@ -201,6 +201,11 @@ export async function answerAskHarshit(request: Request, env: Env) {
   const candidates = Array.from(candidateMap.values());
   const maxLexicalScore = Math.max(1, ...candidates.map((candidate) => candidate.lexicalScore));
 
+  const isBroadExperienceQuestion =
+    /\b(product experience|product work|experience|worked on|product areas|what does harshit do|what kind of product manager)\b/i.test(
+      question,
+    );
+
   const retrieved = candidates
     .map((candidate) => ({
       chunk: candidate.chunk,
@@ -209,7 +214,7 @@ export async function answerAskHarshit(request: Request, env: Env) {
         (candidate.lexicalScore / maxLexicalScore) * 0.3,
     }))
     .sort((a, b) => b.score - a.score)
-    .slice(0, 3);
+    .slice(0, isBroadExperienceQuestion ? 2 : 3);
 
   if (!retrieved.length) {
     return json({
@@ -249,13 +254,17 @@ Rules:
 - If the context is insufficient, say so.
 - Keep the response concise and useful to a recruiter, hiring manager, or product peer.
 - Use plain language.
-- Prefer 2–4 short paragraphs or 3–6 bullets, depending on the question.
+- For broad questions, use exactly 1 short opening sentence followed by 3–4 bullets.
+- For specific questions, use at most 2 short paragraphs followed by bullets when useful.
+- Every bullet must start on a new line with "- ".
+- Do not place multiple bullets on the same line.
 - Do not repeat the question.
-- Do not dump all retrieved context; select only the evidence needed to answer.
-- Use Markdown sparingly: short bold labels and bullet points are welcome.
-- For broad experience questions, lead with a 1–2 sentence summary, then mention the most relevant examples.
+- Do not dump or copy the retrieved context; synthesize only the evidence needed.
+- Use Markdown only for bullets and occasional bold labels.
+- For broad experience questions, prioritize the role, product domains, responsibilities, and 2–4 concrete examples.
 - For a specific case study, explain the problem, solution, and Harshit’s role without turning it into a full PRD.
 - For skills questions, group skills into a few useful categories rather than listing everything.
+- Keep the total answer under 140 words unless the question genuinely requires more detail.
 
 Portfolio context:
 ${context}
