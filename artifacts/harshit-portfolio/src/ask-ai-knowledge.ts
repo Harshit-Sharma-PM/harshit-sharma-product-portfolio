@@ -70,6 +70,20 @@ export const askHarshitKnowledge: KnowledgeChunk[] = [
       "Dispute Payment Management (DPM) is another digital-product area included in Harshit’s American Express product experience. The portfolio presents it as part of his broader work across customer-servicing and operational workflows.",
   },
   {
+    id: "clic-involvement",
+    title: "CLIC — Harshit’s involvement",
+    section: "Professional experience",
+    text:
+      "Harshit’s CLIC involvement is connected to customer-servicing workflows and UAT in the staging environment. His portfolio experience includes working with CBR workflows in CLIC, validating application controls, using feed files and scheduled jobs for test scenarios, checking case-generation outcomes and validating relevant ELF logs. He also works with front-line colleague case workflows. The portfolio should describe this as product/UAT involvement rather than claiming ownership of the entire CLIC platform.",
+  },
+  {
+    id: "product-areas",
+    title: "Key product areas",
+    section: "Professional experience",
+    text:
+      "Key product areas represented in Harshit’s portfolio are CLIC case-management workflows, Credit Balance Refund (CBR), App Controls and Dispute Payment Management (DPM). CLIC is the internal case-management application/environment; CBR, App Controls and DPM are product areas within his American Express experience.",
+  },
+  {
     id: "saarthi-overview",
     title: "Saarthi AI — case study",
     section: "0 → 1 AI Product Case Study",
