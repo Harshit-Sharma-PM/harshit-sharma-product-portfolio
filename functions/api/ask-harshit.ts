@@ -195,7 +195,12 @@ export async function answerAskHarshit(request: Request, env: Env) {
   // history is only used when the current question is clearly a follow-up.
   const followUpPattern =
     /\b(it|that|this|they|them|he|his|she|her|their|the product|the project|that product|that project|his role|his work)\b/i;
-  const isFollowUp = followUpPattern.test(question) && recentUserQuestions.length > 0;
+  const directTopicPattern =
+    /\b(cbr|credit balance refund|clic|saarthi|app controls?|dpm|dispute payment management|education|educational|degree|university|college|academic|american express|product manager|product skills|ai skills|genai|agentic ai|rag)\b/i;
+  const isFollowUp =
+    followUpPattern.test(question) &&
+    !directTopicPattern.test(question) &&
+    recentUserQuestions.length > 0;
   const retrievalQuestion = isFollowUp
     ? recentUserQuestions[recentUserQuestions.length - 1] + "\n" + question
     : question;
