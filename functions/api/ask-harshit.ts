@@ -267,13 +267,19 @@ export async function answerAskHarshit(request: Request, env: Env) {
     return 0;
   };
 
+  const retrievalScopeText = (isFollowUp ? retrievalQuestion : question).toLowerCase();
   const explicitEntity =
-    /\b(?:cbr|credit balance refund|clic|saarthi|app controls?|dpm|dispute payment management)\b/i.test(normalizedQuestion)
-      ? normalizedQuestion.match(/\b(?:cbr|credit balance refund|clic|saarthi|app controls?|dpm|dispute payment management)\b/i)?.[0]?.toLowerCase()
+    /\b(?:cbr|credit balance refund|clic|saarthi|app controls?|dpm|dispute payment management|concentrix|barclays)\b/i.test(
+      retrievalScopeText,
+    )
+      ? retrievalScopeText.match(
+          /\b(?:cbr|credit balance refund|clic|saarthi|app controls?|dpm|dispute payment management|concentrix|barclays)\b/i,
+        )?.[0]?.toLowerCase()
       : null;
 
-  // When the user names a specific product, keep retrieval inside that product's
-  // evidence. This prevents unrelated semantic matches from contaminating the answer.
+  // When a topic is explicit, retrieval must stay inside that topic's evidence.
+  // If the knowledge base has no evidence for that topic, do not substitute
+  // semantically similar chunks from another part of the portfolio.
   const entityCandidates = explicitEntity
     ? candidates.filter(({ chunk }) => {
         if (/\b(?:cbr|credit balance refund)\b/i.test(explicitEntity)) return chunk.id.startsWith("cbr-");
@@ -281,9 +287,18 @@ export async function answerAskHarshit(request: Request, env: Env) {
         if (/\bsaarthi\b/i.test(explicitEntity)) return chunk.id.startsWith("saarthi-");
         if (/\bapp controls?\b/i.test(explicitEntity)) return chunk.id === "app-controls";
         if (/\b(?:dpm|dispute payment management)\b/i.test(explicitEntity)) return chunk.id === "dpm";
+        if (/\b(?:concentrix|barclays)\b/i.test(explicitEntity)) return false;
         return true;
       })
     : candidates;
+
+  if (explicitEntity && entityCandidates.length === 0) {
+    return json({
+      answer:
+        "I don’t have enough verified information in Harshit’s portfolio to answer that accurately. I don’t want to guess about this part of his experience.",
+      sources: [],
+    });
+  }
 
   const rankedCandidates = entityCandidates.length ? entityCandidates : candidates;
 
@@ -339,6 +354,8 @@ Speak naturally and confidently, like a knowledgeable human assistant who has re
 - Do not translate a Hinglish question into invented technical details. Interpret the intent, then answer only from the supplied evidence.
 
 Ground every factual claim in the supplied portfolio evidence.
+- Treat the supplied portfolio evidence as the complete source of truth for this answer. Do not fill missing details from general knowledge, prior model knowledge, or plausible assumptions.
+- If a requested topic has no directly relevant evidence in the supplied context, say that you do not have enough verified portfolio information rather than producing a broader profile.
 
 Important boundaries:
 - Never invent employers, responsibilities, metrics, clients, salary, projects, technologies, achievements, or outcomes.
