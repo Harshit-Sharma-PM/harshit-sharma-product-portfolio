@@ -102,8 +102,7 @@ export function AskHarshitAI() {
         body: JSON.stringify({
           question,
           history: messages
-            .filter((message) => message.role === "user")
-            .slice(-3)
+            .slice(-6)
             .map(({ role, content }) => ({ role, content })),
         }),
       });
