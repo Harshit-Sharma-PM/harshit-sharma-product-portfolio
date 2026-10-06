@@ -44,6 +44,17 @@ function tokenize(text: string) {
     .replace(/[^a-z0-9\s]/g, " ")
     .split(/\s+/)
     .filter((token) => token.length > 2);
+}\n\nfunction normalizePortfolioQuestion(text: string) {
+  let normalized = text.trim();
+
+  normalized = normalized.replace(/\b(?:hardhit|harshith|harshit\s+sharmaa|harshit\s+sharmma)\b/gi, "Harshit");
+  normalized = normalized.replace(/\b(?:harshit\s*\*)\b/gi, "Harshit");
+
+  if (/^\s*(?:tell\s+me\s+about\s+yourself|tell\s+me\s+more\s+about\s+(?:him|harshit)|who\s+is\s+harshit|what\s+does\s+harshit\s+do|what\s+does\s+he\s+do)\s*[?.!]*$/i.test(normalized)) {
+    return normalized + " Harshit professional profile, product experience, American Express, product focus";
+  }
+
+  return normalized;
 }
 
 function lexicalScore(question: string, chunk: KnowledgeChunk) {
@@ -179,7 +190,8 @@ export async function answerAskHarshit(request: Request, env: Env) {
   }
 
   const body = (await request.json().catch(() => ({}))) as RequestBody;
-  const question = body.question?.trim();
+  const rawQuestion = body.question?.trim();
+  const question = rawQuestion ? normalizePortfolioQuestion(rawQuestion) : rawQuestion;
 
   if (!question || question.length > 500) {
     return json({ error: "Please enter a question up to 500 characters." }, { status: 400 });
@@ -269,7 +281,7 @@ export async function answerAskHarshit(request: Request, env: Env) {
   // do not let a merely similar embedding pull in unrelated chunks.
   const hasLexicalEvidence = candidates.some((candidate) => candidate.lexicalScore > 0);
   const hasKnownPortfolioTopic =
-    /\b(?:harshit|american express|amex|cbr|credit balance refund|clic|saarthi|app controls?|dpm|dispute payment management|concentrix|barclays|product manager|product management|education|degree|university|genai|generative ai|agentic ai|rag|automation|portfolio|case study|skills?|tools?)\b/i.test(
+    /\b(?:harshit|american express|amex|cbr|credit balance refund|clic|saarthi|app controls?|dpm|dispute payment management|concentrix|barclays|product manager|product management|education|degree|university|genai|generative ai|agentic ai|rag|automation|portfolio|case study|skills?|tools?|professional profile|professional focus)\b/i.test(
       retrievalScopeText,
     );
 
@@ -371,6 +383,8 @@ Your job is to help a recruiter, hiring manager, product professional, or curiou
 
 Speak naturally and confidently, like a knowledgeable human assistant who has read Harshit's portfolio. Do not sound like a database, a search engine, or a generic AI summary.
 - Answer in the user's language and style. If the user asks in Hinglish, respond naturally in Hinglish.
+- Understand obvious typos and casual spellings of Harshit's name (for example, "hardhit" or "harshith") as references to Harshit. Do not mention the typo unless useful.
+- For broad profile questions such as "tell me about yourself", "tell me more about Harshit", "who is Harshit", or "what does he do?", give a concise overview using the profile, positioning, education, and professional-experience evidence.
 - Do not translate a Hinglish question into invented technical details. Interpret the intent, then answer only from the supplied evidence.
 
 Ground every factual claim in the supplied portfolio evidence.
