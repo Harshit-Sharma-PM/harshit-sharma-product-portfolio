@@ -239,10 +239,20 @@ export async function answerAskHarshit(request: Request, env: Env) {
   }
 
   const candidates = Array.from(candidateMap.values());
+  const normalizedQuestion = question.toLowerCase();
+  const retrievalScopeText = (isFollowUp ? retrievalQuestion : question).toLowerCase();
+
+  const explicitEntity =
+    /\b(?:cbr|credit balance refund|clic|saarthi|app controls?|dpm|dispute payment management|concentrix|barclays)\b/i.test(
+      retrievalScopeText,
+    )
+      ? retrievalScopeText.match(
+          /\b(?:cbr|credit balance refund|clic|saarthi|app controls?|dpm|dispute payment management|concentrix|barclays)\b/i,
+        )?.[0]?.toLowerCase()
+      : null;
 
   // If the question has no explicit portfolio topic and no lexical evidence,
-  // do not let a merely similar embedding pull in unrelated chunks. This is
-  // especially important for unknown terms such as YOLO/NADetQ.
+  // do not let a merely similar embedding pull in unrelated chunks.
   const hasLexicalEvidence = candidates.some((candidate) => candidate.lexicalScore > 0);
   const hasKnownPortfolioTopic =
     /\b(?:harshit|american express|amex|cbr|credit balance refund|clic|saarthi|app controls?|dpm|dispute payment management|concentrix|barclays|product manager|product management|education|degree|university|genai|generative ai|agentic ai|rag|automation|portfolio|case study|skills?|tools?)\b/i.test(
@@ -259,10 +269,6 @@ export async function answerAskHarshit(request: Request, env: Env) {
 
   const maxLexicalScore = Math.max(1, ...candidates.map((candidate) => candidate.lexicalScore));
 
-  // Exact portfolio entities should beat semantically related but unrelated
-  // chunks. This prevents questions about education, CLIC, CBR, etc. from
-  // inheriting sources from the previous conversation topic.
-  const normalizedQuestion = question.toLowerCase();
   const entityBoost = (chunk: KnowledgeChunk) => {
     if (/\b(?:cbr|credit balance refund)\b/i.test(normalizedQuestion)) {
       return chunk.id.startsWith("cbr-") ? 0.35 : 0;
@@ -284,16 +290,6 @@ export async function answerAskHarshit(request: Request, env: Env) {
     }
     return 0;
   };
-
-  const retrievalScopeText = (isFollowUp ? retrievalQuestion : question).toLowerCase();
-  const explicitEntity =
-    /\b(?:cbr|credit balance refund|clic|saarthi|app controls?|dpm|dispute payment management|concentrix|barclays)\b/i.test(
-      retrievalScopeText,
-    )
-      ? retrievalScopeText.match(
-          /\b(?:cbr|credit balance refund|clic|saarthi|app controls?|dpm|dispute payment management|concentrix|barclays)\b/i,
-        )?.[0]?.toLowerCase()
-      : null;
 
   // When a topic is explicit, retrieval must stay inside that topic's evidence.
   // If the knowledge base has no evidence for that topic, do not substitute
