@@ -256,14 +256,14 @@ export async function answerAskHarshit(request: Request, env: Env) {
   const normalizedQuestion = question.toLowerCase();
   const retrievalScopeText = (isFollowUp ? retrievalQuestion : question).toLowerCase();
 
-  const explicitEntity =
-    /\b(?:cbr|credit balance refund|clic|saarthi|app controls?|dpm|dispute payment management|concentrix|barclays)\b/i.test(
-      retrievalScopeText,
-    )
-      ? retrievalScopeText.match(
-          /\b(?:cbr|credit balance refund|clic|saarthi|app controls?|dpm|dispute payment management|concentrix|barclays)\b/i,
-        )?.[0]?.toLowerCase()
-      : null;
+  const explicitEntities = [
+    /\b(?:cbr|credit balance refund)\b/i.test(retrievalScopeText) ? "cbr" : null,
+    /\bclic\b/i.test(retrievalScopeText) ? "clic" : null,
+    /\bsaarthi\b/i.test(retrievalScopeText) ? "saarthi" : null,
+    /\bapp controls?\b/i.test(retrievalScopeText) ? "app-controls" : null,
+    /\b(?:dpm|dispute payment management)\b/i.test(retrievalScopeText) ? "dpm" : null,
+    /\b(?:concentrix|barclays)\b/i.test(retrievalScopeText) ? "employment" : null,
+  ].filter((value): value is string => Boolean(value));
 
   // If the question has no explicit portfolio topic and no lexical evidence,
   // do not let a merely similar embedding pull in unrelated chunks.
@@ -273,7 +273,7 @@ export async function answerAskHarshit(request: Request, env: Env) {
       retrievalScopeText,
     );
 
-  if (!hasLexicalEvidence && !hasKnownPortfolioTopic && !explicitEntity) {
+  if (!hasLexicalEvidence && !hasKnownPortfolioTopic && explicitEntities.length === 0) {
     return json({
       answer:
         "I don’t have enough verified information in Harshit’s portfolio to answer that accurately. I don’t want to guess or pull in unrelated portfolio material.",
@@ -284,43 +284,35 @@ export async function answerAskHarshit(request: Request, env: Env) {
   const maxLexicalScore = Math.max(1, ...candidates.map((candidate) => candidate.lexicalScore));
 
   const entityBoost = (chunk: KnowledgeChunk) => {
-    if (/\b(?:cbr|credit balance refund)\b/i.test(normalizedQuestion)) {
-      return chunk.id.startsWith("cbr-") ? 0.35 : 0;
-    }
-    if (/\bclic\b/i.test(normalizedQuestion)) {
-      return chunk.id === "clic" ? 0.35 : 0;
-    }
-    if (/\b(?:education|educational|degree|university|college|academic)\b/i.test(normalizedQuestion)) {
-      return chunk.id === "education" ? 0.35 : 0;
-    }
-    if (/\bsaarthi\b/i.test(normalizedQuestion)) {
-      return chunk.id.startsWith("saarthi-") ? 0.30 : 0;
-    }
-    if (/\b(?:app controls?)\b/i.test(normalizedQuestion)) {
-      return chunk.id === "app-controls" ? 0.35 : 0;
-    }
-    if (/\b(?:dpm|dispute payment management)\b/i.test(normalizedQuestion)) {
-      return chunk.id === "dpm" ? 0.35 : 0;
-    }
-    return 0;
+    let boost = 0;
+    if (/\b(?:cbr|credit balance refund)\b/i.test(normalizedQuestion) && chunk.id.startsWith("cbr-")) boost += 0.35;
+    if (/\bclic\b/i.test(normalizedQuestion) && chunk.id.startsWith("clic")) boost += 0.35;
+    if (/\b(?:education|educational|degree|university|college|academic)\b/i.test(normalizedQuestion) && chunk.id === "education") boost += 0.35;
+    if (/\bsaarthi\b/i.test(normalizedQuestion) && chunk.id.startsWith("saarthi-")) boost += 0.30;
+    if (/\b(?:app controls?)\b/i.test(normalizedQuestion) && chunk.id === "app-controls") boost += 0.35;
+    if (/\b(?:dpm|dispute payment management)\b/i.test(normalizedQuestion) && chunk.id === "dpm") boost += 0.35;
+    if (/\b(?:what|which|kind|types?)\b/i.test(normalizedQuestion) && /product areas|key product areas/i.test(chunk.title)) boost += 0.30;
+    return boost;
   };
 
   // When a topic is explicit, retrieval must stay inside that topic's evidence.
   // If the knowledge base has no evidence for that topic, do not substitute
   // semantically similar chunks from another part of the portfolio.
-  const entityCandidates = explicitEntity
+  const entityCandidates = explicitEntities.length
     ? candidates.filter(({ chunk }) => {
-        if (/\b(?:cbr|credit balance refund)\b/i.test(explicitEntity)) return chunk.id.startsWith("cbr-");
-        if (/\bclic\b/i.test(explicitEntity)) return chunk.id === "clic";
-        if (/\bsaarthi\b/i.test(explicitEntity)) return chunk.id.startsWith("saarthi-");
-        if (/\bapp controls?\b/i.test(explicitEntity)) return chunk.id === "app-controls";
-        if (/\b(?:dpm|dispute payment management)\b/i.test(explicitEntity)) return chunk.id === "dpm";
-        if (/\b(?:concentrix|barclays)\b/i.test(explicitEntity)) return false;
-        return true;
+        return explicitEntities.some((entity) => {
+          if (entity === "cbr") return chunk.id.startsWith("cbr-");
+          if (entity === "clic") return chunk.id.startsWith("clic");
+          if (entity === "saarthi") return chunk.id.startsWith("saarthi-");
+          if (entity === "app-controls") return chunk.id === "app-controls";
+          if (entity === "dpm") return chunk.id === "dpm";
+          if (entity === "employment") return false;
+          return false;
+        });
       })
     : candidates;
 
-  if (explicitEntity && entityCandidates.length === 0) {
+  if (explicitEntities.length > 0 && entityCandidates.length === 0) {
     return json({
       answer:
         "I don’t have enough verified information in Harshit’s portfolio to answer that accurately. I don’t want to guess about this part of his experience.",
@@ -406,6 +398,9 @@ Important boundaries:
 - Do not say Harshit "defined validation rules" unless the evidence explicitly says he defined the rules; "contributed to validation" is safer.
 - Do not proactively list things Harshit did not do, did not own, or was not responsible for. Avoid negative disclaimers such as "he did not..." unless the user explicitly asks about ownership, boundaries, or what he did not do.
 - When the user asks about his role or involvement in a specific product, answer with the product-specific evidence first. Do not fill gaps with generic industry knowledge or responsibilities from other portfolio chunks. Focus on what he contributed and the value of that contribution.
+- When a question asks about multiple products or topics, answer each named topic separately using its own retrieved evidence. Do not use one product's evidence to answer another product's part.
+- For "what kind of products", "what products", or "which product areas" questions, list only product areas explicitly named in the supplied portfolio evidence. Do not invent or introduce a product name such as FCL unless it appears explicitly in the supplied evidence.
+- Never introduce a product, acronym, employer, framework, or project name merely because it sounds plausible or is related to the domain.
 - Avoid meta-disclaimers about what the portfolio material does or does not detail unless the user asks about evidence or confidence.
 - Never include phrases such as "(Summary from portfolio.)" or similar meta-commentary in a normal answer.
 - If the evidence says Harshit "contributed", use contribution language rather than claiming he owned, designed, built, or delivered the entire product.
@@ -450,10 +445,14 @@ ${question}`;
 
   let answer = extractAiText(result);
 
-  // Final factual guard for a known portfolio naming rule.
+  // Final factual guard for known portfolio naming and scope rules.
   answer = answer
     .replace(/\bClaim(?:s)? Balance Recovery\s*\(CBR\)\b/gi, "Credit Balance Refund (CBR)")
-    .replace(/\bRequest Balance Refund\b/gi, "Credit Balance Refund");
+    .replace(/\bRequest Balance Refund\b/gi, "Credit Balance Refund")
+    .replace(/\bdefining requirements\b/gi, "contributing to requirements")
+    .replace(/\bestablishing validation rules\b/gi, "contributing to validation")
+    .replace(/\bdeep understanding of the end-to-end process\b/gi, "workflow understanding")
+    .replace(/\bensuring launch readiness for deployments\b/gi, "launch readiness");
 
   return json({
     answer,
