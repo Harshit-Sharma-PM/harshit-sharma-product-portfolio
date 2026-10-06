@@ -1,4 +1,5 @@
-import { Bot } from 'lucide-react';
+import { Bot, Moon, Sun } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { Link, Route, Switch, useParams } from 'wouter';
 import { caseStudies } from './case-studies/registry';
 import { AskHarshitAI } from './components/AskHarshitAI';
@@ -17,6 +18,38 @@ function AskHarshitFloatingButton() {
   );
 }
 
+function ThemeToggle() {
+  const [dark, setDark] = useState(() => {
+    try {
+      return window.localStorage.getItem('portfolio-theme') === 'dark';
+    } catch {
+      return false;
+    }
+  });
+
+  useEffect(() => {
+    document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+    try {
+      window.localStorage.setItem('portfolio-theme', dark ? 'dark' : 'light');
+    } catch {
+      // Ignore storage failures and keep the current theme for this session.
+    }
+  }, [dark]);
+
+  return (
+    <button
+      className="theme-toggle"
+      type="button"
+      onClick={() => setDark((current) => !current)}
+      aria-label={dark ? 'Switch to light theme' : 'Switch to dark theme'}
+      title={dark ? 'Switch to light theme' : 'Switch to dark theme'}
+    >
+      {dark ? <Sun size={15} aria-hidden="true" /> : <Moon size={15} aria-hidden="true" />}
+      <span>{dark ? 'Light' : 'Dark'}</span>
+    </button>
+  );
+}
+
 function PortfolioNavigation() {
   return (
     <nav className="topbar portfolio-topbar" aria-label="Portfolio navigation">
@@ -27,6 +60,7 @@ function PortfolioNavigation() {
           <a href="/#case-studies">Case studies</a>
           <a href="/#ask-harshit">Ask Harshit AI</a>
           <a href="https://www.linkedin.com/in/harshit-sharma-bb5a61286" target="_blank" rel="noopener noreferrer">LinkedIn ↗</a>
+          <ThemeToggle />
         </div>
       </div>
     </nav>
