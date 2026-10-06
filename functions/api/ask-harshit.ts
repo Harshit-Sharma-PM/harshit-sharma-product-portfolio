@@ -239,6 +239,24 @@ export async function answerAskHarshit(request: Request, env: Env) {
   }
 
   const candidates = Array.from(candidateMap.values());
+
+  // If the question has no explicit portfolio topic and no lexical evidence,
+  // do not let a merely similar embedding pull in unrelated chunks. This is
+  // especially important for unknown terms such as YOLO/NADetQ.
+  const hasLexicalEvidence = candidates.some((candidate) => candidate.lexicalScore > 0);
+  const hasKnownPortfolioTopic =
+    /\b(?:harshit|american express|amex|cbr|credit balance refund|clic|saarthi|app controls?|dpm|dispute payment management|concentrix|barclays|product manager|product management|education|degree|university|genai|generative ai|agentic ai|rag|automation|portfolio|case study|skills?|tools?)\b/i.test(
+      retrievalScopeText,
+    );
+
+  if (!hasLexicalEvidence && !hasKnownPortfolioTopic && !explicitEntity) {
+    return json({
+      answer:
+        "I don’t have enough verified information in Harshit’s portfolio to answer that accurately. I don’t want to guess or pull in unrelated portfolio material.",
+      sources: [],
+    });
+  }
+
   const maxLexicalScore = Math.max(1, ...candidates.map((candidate) => candidate.lexicalScore));
 
   // Exact portfolio entities should beat semantically related but unrelated
@@ -418,7 +436,12 @@ ${question}`;
     });
   }
 
-  const answer = extractAiText(result);
+  let answer = extractAiText(result);
+
+  // Final factual guard for a known portfolio naming rule.
+  answer = answer
+    .replace(/\bClaim(?:s)? Balance Recovery\s*\(CBR\)\b/gi, "Credit Balance Refund (CBR)")
+    .replace(/\bRequest Balance Refund\b/gi, "Credit Balance Refund");
 
   return json({
     answer,
