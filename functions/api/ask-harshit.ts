@@ -44,7 +44,9 @@ function tokenize(text: string) {
     .replace(/[^a-z0-9\s]/g, " ")
     .split(/\s+/)
     .filter((token) => token.length > 2);
-}\n\nfunction normalizePortfolioQuestion(text: string) {
+}
+
+function normalizePortfolioQuestion(text: string) {
   let normalized = text.trim();
 
   normalized = normalized.replace(/\b(?:hardhit|harshith|harshit\s+sharmaa|harshit\s+sharmma)\b/gi, "Harshit");
