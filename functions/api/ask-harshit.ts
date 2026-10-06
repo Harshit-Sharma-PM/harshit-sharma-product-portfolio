@@ -185,24 +185,38 @@ export async function answerAskHarshit(request: Request, env: Env) {
     return json({ error: "Please enter a question up to 500 characters." }, { status: 400 });
   }
 
-  const recentUserQuestions = (body.history ?? [])
-    .filter((turn) => turn.role === "user" && typeof turn.content === "string")
-    .map((turn) => turn.content!.trim())
-    .filter(Boolean)
-    .slice(-3);
+  const recentTurns = (body.history ?? [])
+    .filter((turn) => typeof turn.content === "string")
+    .map((turn) => ({ role: turn.role, content: turn.content!.trim() }))
+    .filter((turn) => turn.content);
 
-  // Keep direct factual questions focused on the current question. Conversation
-  // history is only used when the current question is clearly a follow-up.
-  const followUpPattern =
-    /\b(it|that|this|they|them|he|his|she|her|their|the product|the project|that product|that project|his role|his work)\b/i;
+  const recentUserQuestions = recentTurns
+    .filter((turn) => turn.role === "user")
+    .map((turn) => turn.content)
+    .slice(-6);
+
+  // Short acknowledgements and references such as "okay tell me" should inherit
+  // the last substantive user topic instead of becoming a new retrieval query.
+  const vagueFollowUpPattern =
+    /^(?:ok|okay|yes|yeah|yep|sure|hmm|tell me|go ahead|do it|please do|yes do it)(?:[.!?\s].*)?$/i;
+  const referencePattern =
+    /\b(it|that|this|they|them|he|his|she|her|their|the product|the project|that product|that project|his role|his work|previous message|what you asked)\b/i;
   const directTopicPattern =
-    /\b(cbr|credit balance refund|clic|saarthi|app controls?|dpm|dispute payment management|education|educational|degree|university|college|academic|american express|product manager|product skills|ai skills|genai|agentic ai|rag)\b/i;
+    /\b(cbr|credit balance refund|clic|saarthi|app controls?|dpm|dispute payment management|education|educational|degree|university|college|academic|american express|product manager|product skills|ai skills|genai|generative ai|agentic ai|rag|concentrix|barclays)\b/i;
+
+  const substantivePreviousUserQuestion =
+    [...recentUserQuestions]
+      .reverse()
+      .find((item) => !vagueFollowUpPattern.test(item));
+
   const isFollowUp =
-    followUpPattern.test(question) &&
+    recentUserQuestions.length > 0 &&
     !directTopicPattern.test(question) &&
-    recentUserQuestions.length > 0;
-  const retrievalQuestion = isFollowUp
-    ? recentUserQuestions[recentUserQuestions.length - 1] + "\n" + question
+    (vagueFollowUpPattern.test(question) ||
+      referencePattern.test(question));
+
+  const retrievalQuestion = isFollowUp && substantivePreviousUserQuestion
+    ? substantivePreviousUserQuestion + "\n" + question
     : question;
 
   const semanticMatches = await semanticRetrieve(retrievalQuestion, env);
@@ -353,11 +367,11 @@ export async function answerAskHarshit(request: Request, env: Env) {
     });
   }
 
-  const conversationContext = recentUserQuestions.length
-    ? `Recent user questions (use only to understand follow-ups and references):\n${recentUserQuestions
-        .map((item, index) => `${index + 1}. ${item}`)
+  const conversationContext = recentTurns.length
+    ? `Recent conversation (use only to resolve references; never treat it as additional factual evidence):\n${recentTurns
+        .map((turn, index) => `${index + 1}. ${turn.role}: ${turn.content}`)
         .join("\n")}`
-    : "No earlier user question is available.";
+    : "No earlier conversation is available.";
 
   const prompt = `You are Ask Harshit AI, an intelligent assistant representing Harshit Sharma's professional portfolio.
 
@@ -386,7 +400,9 @@ Important boundaries:
 - Do not upgrade a contribution into ownership, leadership, design, building, development, delivery, or end-to-end responsibility unless the evidence explicitly states that level of responsibility.
 - Do not transfer a general responsibility from the American Express role description onto a specific product unless the product-specific evidence explicitly connects them.
 - When describing a specific product such as CBR, prefer the exact scope stated in its product-specific evidence: requirements, workflow understanding, validation, exception scenarios and launch readiness.
-- For CBR specifically, use the exact name "Credit Balance Refund (CBR)" and describe Harshit's contribution positively and concretely using only the supported scope: requirements, workflow understanding, validation, exception scenarios and launch readiness. Never introduce SQL, databases, tracking, customer-refund handling for other companies, or any other CBR responsibility unless it appears in the supplied evidence. Never expand CBR as "Claim Balance Recovery".
+- For CBR specifically, use the exact name "Credit Balance Refund (CBR)" and describe Harshit's contribution positively and concretely using only the supported scope: requirements, workflow understanding, validation, exception scenarios and launch readiness. Do not call it a "project" unless the evidence or user's wording requires that framing.
+- For a CBR contribution question, do not invent interpretations such as "direct ballistic connection", "rule-based payment workflow", "payment-side work", "tracking refunds", or similar technical/process claims. If explaining the CBR flow, use only the documented sequence: credit balance identification, eligibility checks, bank/direct-debit validation, due-diligence and exception handling, and refund processing.
+- Never introduce SQL, databases, customer-refund handling for other companies, or any other CBR responsibility unless it appears in the supplied evidence. Never expand CBR as "Claim Balance Recovery".
 - Do not say Harshit "defined validation rules" unless the evidence explicitly says he defined the rules; "contributed to validation" is safer.
 - Do not proactively list things Harshit did not do, did not own, or was not responsible for. Avoid negative disclaimers such as "he did not..." unless the user explicitly asks about ownership, boundaries, or what he did not do.
 - When the user asks about his role or involvement in a specific product, answer with the product-specific evidence first. Do not fill gaps with generic industry knowledge or responsibilities from other portfolio chunks. Focus on what he contributed and the value of that contribution.
