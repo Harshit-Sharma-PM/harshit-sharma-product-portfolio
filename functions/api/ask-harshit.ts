@@ -267,7 +267,27 @@ export async function answerAskHarshit(request: Request, env: Env) {
     return 0;
   };
 
-  const retrieved = candidates
+  const explicitEntity =
+    /\b(?:cbr|credit balance refund|clic|saarthi|app controls?|dpm|dispute payment management)\b/i.test(normalizedQuestion)
+      ? normalizedQuestion.match(/\b(?:cbr|credit balance refund|clic|saarthi|app controls?|dpm|dispute payment management)\b/i)?.[0]?.toLowerCase()
+      : null;
+
+  // When the user names a specific product, keep retrieval inside that product's
+  // evidence. This prevents unrelated semantic matches from contaminating the answer.
+  const entityCandidates = explicitEntity
+    ? candidates.filter(({ chunk }) => {
+        if (/\b(?:cbr|credit balance refund)\b/i.test(explicitEntity)) return chunk.id.startsWith("cbr-");
+        if (/\bclic\b/i.test(explicitEntity)) return chunk.id === "clic";
+        if (/\bsaarthi\b/i.test(explicitEntity)) return chunk.id.startsWith("saarthi-");
+        if (/\bapp controls?\b/i.test(explicitEntity)) return chunk.id === "app-controls";
+        if (/\b(?:dpm|dispute payment management)\b/i.test(explicitEntity)) return chunk.id === "dpm";
+        return true;
+      })
+    : candidates;
+
+  const rankedCandidates = entityCandidates.length ? entityCandidates : candidates;
+
+  const retrieved = rankedCandidates
     .map((candidate) => ({
       chunk: candidate.chunk,
       score:
@@ -315,6 +335,8 @@ export async function answerAskHarshit(request: Request, env: Env) {
 Your job is to help a recruiter, hiring manager, product professional, or curious visitor understand Harshit's experience and product work.
 
 Speak naturally and confidently, like a knowledgeable human assistant who has read Harshit's portfolio. Do not sound like a database, a search engine, or a generic AI summary.
+- Answer in the user's language and style. If the user asks in Hinglish, respond naturally in Hinglish.
+- Do not translate a Hinglish question into invented technical details. Interpret the intent, then answer only from the supplied evidence.
 
 Ground every factual claim in the supplied portfolio evidence.
 
@@ -333,10 +355,10 @@ Important boundaries:
 - Do not upgrade a contribution into ownership, leadership, design, building, development, delivery, or end-to-end responsibility unless the evidence explicitly states that level of responsibility.
 - Do not transfer a general responsibility from the American Express role description onto a specific product unless the product-specific evidence explicitly connects them.
 - When describing a specific product such as CBR, prefer the exact scope stated in its product-specific evidence: requirements, workflow understanding, validation, exception scenarios and launch readiness.
-- For CBR specifically, use the exact name "Credit Balance Refund (CBR)" and describe Harshit's contribution positively and concretely using the supported scope: requirements, workflow understanding, validation, exception scenarios and launch readiness. Never expand CBR as "Claim Balance Recovery".
+- For CBR specifically, use the exact name "Credit Balance Refund (CBR)" and describe Harshit's contribution positively and concretely using only the supported scope: requirements, workflow understanding, validation, exception scenarios and launch readiness. Never introduce SQL, databases, tracking, customer-refund handling for other companies, or any other CBR responsibility unless it appears in the supplied evidence. Never expand CBR as "Claim Balance Recovery".
 - Do not say Harshit "defined validation rules" unless the evidence explicitly says he defined the rules; "contributed to validation" is safer.
 - Do not proactively list things Harshit did not do, did not own, or was not responsible for. Avoid negative disclaimers such as "he did not..." unless the user explicitly asks about ownership, boundaries, or what he did not do.
-- When the user asks about his role, focus first on what he contributed and the value of that contribution. If ownership boundaries are directly relevant, state them briefly and neutrally rather than framing the answer around what he did not do.
+- When the user asks about his role or involvement in a specific product, answer with the product-specific evidence first. Do not fill gaps with generic industry knowledge or responsibilities from other portfolio chunks. Focus on what he contributed and the value of that contribution.
 - Avoid meta-disclaimers about what the portfolio material does or does not detail unless the user asks about evidence or confidence.
 - Never include phrases such as "(Summary from portfolio.)" or similar meta-commentary in a normal answer.
 - If the evidence says Harshit "contributed", use contribution language rather than claiming he owned, designed, built, or delivered the entire product.
