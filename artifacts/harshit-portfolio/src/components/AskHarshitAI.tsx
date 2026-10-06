@@ -178,7 +178,7 @@ export function AskHarshitAI() {
                   <div className="ask-ai-content">{renderMarkdown(message.content)}</div>
                   {message.sources?.length ? (
                     <div className="ask-ai-sources">
-                      <span className="ask-ai-sources-label">Grounded in</span>
+                      <span className="ask-ai-sources-label">Sources</span>
                       {message.sources.map((source, sourceIndex) => (
                         <span className="ask-ai-source-chip" key={sourceIndex}>
                           {source.title}
@@ -216,8 +216,8 @@ export function AskHarshitAI() {
           </form>
 
           <p className="ask-ai-disclaimer">
-            Answers are grounded in portfolio content. The assistant should acknowledge when
-            the knowledge base does not contain enough evidence.
+            Answers use information from Harshit’s portfolio. The assistant should acknowledge
+            when the portfolio does not contain enough evidence.
           </p>
         </div>
       </div>
