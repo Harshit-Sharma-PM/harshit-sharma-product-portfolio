@@ -522,3 +522,53 @@ a:focus-visible, button:focus-visible { outline: 3px solid #bb7d31; outline-offs
   .ask-ai-heading { flex-direction: column; }
   .ask-ai-message { max-width: 100%; }
 }
+
+
+/* Floating Ask Harshit AI launcher */
+.ask-ai-floating {
+  position: fixed;
+  right: 22px;
+  bottom: 22px;
+  z-index: 1000;
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  min-height: 46px;
+  padding: 0 17px;
+  border: 1px solid rgba(217, 228, 220, .28);
+  border-radius: 999px;
+  background: var(--ink);
+  color: var(--paper);
+  box-shadow: 0 10px 28px rgba(20, 35, 31, .18);
+  text-decoration: none;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .01em;
+  transition: transform .2s ease, background .2s ease, box-shadow .2s ease;
+}
+
+.ask-ai-floating:hover {
+  transform: translateY(-2px);
+  background: var(--teal);
+  box-shadow: 0 13px 32px rgba(20, 35, 31, .24);
+}
+
+.ask-ai-floating svg {
+  flex: 0 0 auto;
+}
+
+@media (max-width: 650px) {
+  .ask-ai-floating {
+    right: 16px;
+    bottom: 16px;
+    width: 48px;
+    height: 48px;
+    min-height: 48px;
+    padding: 0;
+    justify-content: center;
+  }
+
+  .ask-ai-floating span {
+    display: none;
+  }
+}
