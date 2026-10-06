@@ -191,7 +191,15 @@ export async function answerAskHarshit(request: Request, env: Env) {
     .filter(Boolean)
     .slice(-3);
 
-  const retrievalQuestion = [...recentUserQuestions, question].join("\n");
+  // Keep direct factual questions focused on the current question. Conversation
+  // history is only used when the current question is clearly a follow-up.
+  const followUpPattern =
+    /\b(it|that|this|they|them|he|his|she|her|their|the product|the project|that product|that project|his role|his work)\b/i;
+  const isFollowUp = followUpPattern.test(question) && recentUserQuestions.length > 0;
+  const retrievalQuestion = isFollowUp
+    ? recentUserQuestions[recentUserQuestions.length - 1] + "\n" + question
+    : question;
+
   const semanticMatches = await semanticRetrieve(retrievalQuestion, env);
 
   const lexicalMatches = askHarshitKnowledge
@@ -228,12 +236,39 @@ export async function answerAskHarshit(request: Request, env: Env) {
   const candidates = Array.from(candidateMap.values());
   const maxLexicalScore = Math.max(1, ...candidates.map((candidate) => candidate.lexicalScore));
 
+  // Exact portfolio entities should beat semantically related but unrelated
+  // chunks. This prevents questions about education, CLIC, CBR, etc. from
+  // inheriting sources from the previous conversation topic.
+  const normalizedQuestion = question.toLowerCase();
+  const entityBoost = (chunk: KnowledgeChunk) => {
+    if (/\b(?:cbr|credit balance refund)\b/i.test(normalizedQuestion)) {
+      return chunk.id.startsWith("cbr-") ? 0.35 : 0;
+    }
+    if (/\bclic\b/i.test(normalizedQuestion)) {
+      return chunk.id === "clic" ? 0.35 : 0;
+    }
+    if (/\b(?:education|educational|degree|university|college|academic)\b/i.test(normalizedQuestion)) {
+      return chunk.id === "education" ? 0.35 : 0;
+    }
+    if (/\bsaarthi\b/i.test(normalizedQuestion)) {
+      return chunk.id.startsWith("saarthi-") ? 0.30 : 0;
+    }
+    if (/\b(?:app controls?)\b/i.test(normalizedQuestion)) {
+      return chunk.id === "app-controls" ? 0.35 : 0;
+    }
+    if (/\b(?:dpm|dispute payment management)\b/i.test(normalizedQuestion)) {
+      return chunk.id === "dpm" ? 0.35 : 0;
+    }
+    return 0;
+  };
+
   const retrieved = candidates
     .map((candidate) => ({
       chunk: candidate.chunk,
       score:
         candidate.semanticScore * 0.7 +
-        (candidate.lexicalScore / maxLexicalScore) * 0.3,
+        (candidate.lexicalScore / maxLexicalScore) * 0.3 +
+        entityBoost(candidate.chunk),
     }))
     .sort((a, b) => b.score - a.score)
     .slice(0, 4);
@@ -293,14 +328,17 @@ Important boundaries:
 - Do not upgrade a contribution into ownership, leadership, design, building, development, delivery, or end-to-end responsibility unless the evidence explicitly states that level of responsibility.
 - Do not transfer a general responsibility from the American Express role description onto a specific product unless the product-specific evidence explicitly connects them.
 - When describing a specific product such as CBR, prefer the exact scope stated in its product-specific evidence: requirements, workflow understanding, validation, exception scenarios and launch readiness.
-- For CBR specifically, describe Harshit's contribution positively and concretely using the supported scope: requirements, workflow understanding, validation, exception scenarios and launch readiness.
+- For CBR specifically, use the exact name "Credit Balance Refund (CBR)" and describe Harshit's contribution positively and concretely using the supported scope: requirements, workflow understanding, validation, exception scenarios and launch readiness. Never expand CBR as "Claim Balance Recovery".
 - Do not say Harshit "defined validation rules" unless the evidence explicitly says he defined the rules; "contributed to validation" is safer.
 - Do not proactively list things Harshit did not do, did not own, or was not responsible for. Avoid negative disclaimers such as "he did not..." unless the user explicitly asks about ownership, boundaries, or what he did not do.
 - When the user asks about his role, focus first on what he contributed and the value of that contribution. If ownership boundaries are directly relevant, state them briefly and neutrally rather than framing the answer around what he did not do.
 - Avoid meta-disclaimers about what the portfolio material does or does not detail unless the user asks about evidence or confidence.
 - Never include phrases such as "(Summary from portfolio.)" or similar meta-commentary in a normal answer.
 - If the evidence says Harshit "contributed", use contribution language rather than claiming he owned, designed, built, or delivered the entire product.
-- Avoid unsupported phrases such as "hands-on ownership", "end-to-end ownership", "designed and built", or "fully delivered" unless those claims are explicitly supported.
+- For CLIC, describe it as an internal case-management application used by front-line colleagues for customer/card-member servicing workflows, including disputes, payments and profile updates. Do not invent an acronym expansion.
+- For Saarthi AI, describe the documented product work as concept, PRD, product strategy, MVP definition, user journeys and interactive prototype, plus proposed responsible-AI direction. Do not add unsupported claims about production implementation, UI/data validation, or building the system from scratch.
+- For education questions, use the education evidence directly: BA Economics at Delhi University and the BITS School of Management Product Management program with Generative and Agentic AI.
+- Avoid unsupported phrases such as "hands-on ownership", "end-to-end ownership", "designed and built", "fully delivered", or "proof of value" unless those claims are explicitly supported.
 
 ${conversationContext}
 
