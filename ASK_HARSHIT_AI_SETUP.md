@@ -76,3 +76,4 @@ The knowledge base is public portfolio information only. Do not add private resu
 - Grounded generation: implemented when Workers AI binding is available
 - Semantic Vectorize retrieval: supported when Vectorize binding is available
 - Vector index creation and population: requires one-time Cloudflare account setup
+- Preview deployment trigger: refreshed after the latest Ask Harshit AI fix
