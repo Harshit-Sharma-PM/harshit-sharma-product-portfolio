@@ -39,14 +39,14 @@ export const askHarshitKnowledge: KnowledgeChunk[] = [
     title: "CLIC case-management platform",
     section: "Professional experience",
     text:
-      "CLIC is a global case-management platform supporting customer servicing workflows. It is an important example of the type of internal operational product and workflow environment Harshit works around at American Express.",
+      "CLIC is an internal case-management application used by front-line colleagues for customer and card-member servicing workflows, including cases such as disputes, payments and profile updates. It is an important example of the type of internal operational product and workflow environment Harshit works around at American Express.",
   },
   {
     id: "cbr-overview",
     title: "Credit Balance Refund (CBR)",
     section: "Professional experience",
     text:
-      "Credit Balance Refund (CBR) is a credit balance refund workflow. Harshit’s portfolio describes contribution across requirements, workflow understanding, validation, exception scenarios and launch readiness.",
+      "Credit Balance Refund (CBR) is a credit balance refund workflow. Harshit’s portfolio describes contribution across requirements, workflow understanding, validation, exception scenarios and launch readiness. The portfolio uses the expansion Credit Balance Refund; do not reinterpret CBR as another product name.",
   },
   {
     id: "cbr-flow",
@@ -130,6 +130,6 @@ export const askHarshitKnowledge: KnowledgeChunk[] = [
     title: "Education",
     section: "Education",
     text:
-      "Harshit studied BA Economics at Delhi University and completed a BITS School of Management program in Product Management with Generative and Agentic AI.",
+      "Harshit studied BA Economics at Delhi University and completed a BITS School of Management program in Product Management with Generative and Agentic AI. This is the education background represented in his portfolio.",
   },
 ];
