@@ -126,7 +126,11 @@
   overflow-x: auto;
   padding: 11px 14px;
   border-bottom: 1px solid var(--line);
-  scrollbar-width: thin;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.ask-ai-float-starters::-webkit-scrollbar {
+  display: none;
 }
 
 .ask-ai-float-starters button {
