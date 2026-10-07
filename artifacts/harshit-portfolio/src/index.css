@@ -975,3 +975,154 @@ a:focus-visible, button:focus-visible { outline: 3px solid #bb7d31; outline-offs
     text-overflow: ellipsis;
   }
 }
+
+
+/* Case study: keep intentionally dark sections visually stable in both themes. */
+section.dark {
+  background: #1b2b28;
+  color: #f6f3eb;
+}
+section.dark .lead {
+  color: #c5d0c9;
+}
+section.dark .side p {
+  color: #aab9b2;
+}
+section.dark .num {
+  color: #85c8b5;
+}
+section.dark .quote {
+  background: #1d2d29;
+  color: #f6f3eb;
+}
+section.dark .quote small {
+  color: #aebbb4;
+}
+section.dark .quote strong {
+  color: #f6f3eb;
+}
+
+/* Responsive navigation for case study pages. */
+.case-study-nav-primary {
+  display: flex;
+  align-items: center;
+  gap: clamp(13px, 2vw, 25px);
+}
+.case-study-nav-theme {
+  display: flex;
+  align-items: center;
+}
+.case-study-mobile-nav {
+  display: none;
+}
+
+@media (max-width: 650px) {
+  .case-study-topbar .navin {
+    position: relative;
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 0;
+  }
+
+  .case-study-topbar .navlinks {
+    display: none;
+  }
+
+  .case-study-mobile-nav {
+    display: block;
+  }
+
+  .case-study-topbar .brand {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+\n\n/* Final case-study dark-mode contrast hardening. */
+\n/* Keep intentionally dark sections independent of the global theme tokens. */\n
+section.dark {
+  background: #1b2b28;
+  color: #f6f3eb;
+}
+section.dark h2,
+section.dark h3,
+section.dark p,
+section.dark li,
+section.dark b {
+  color: #f6f3eb;
+}
+section.dark .lead {
+  color: #cbd6cf;
+}
+section.dark .side p,
+section.dark .small {
+  color: #aebdb5;
+}
+section.dark .num,
+section.dark .idx,
+section.dark .type,
+section.dark .wk {
+  color: #85c8b5;
+}
+section.dark .quote {
+  background: #1d2d29;
+  color: #f6f3eb;
+  border-left-color: #e1a45d;
+}
+section.dark .quote small {
+  color: #aebbb4;
+}
+section.dark .quote strong {
+  color: #f6f3eb;
+}
+
+/* Tables sit on dark pages, so the row surface and text must be paired for contrast. */
+:root[data-theme="dark"] table {
+  background: #17211f;
+}
+:root[data-theme="dark"] th {
+  background: #203832;
+  color: #f1f5f0;
+  border-bottom-color: #40524b;
+}
+:root[data-theme="dark"] td {
+  background: #17211f;
+  color: #d3ded7;
+  border-bottom-color: #40524b;
+}
+
+/* Footer is an intentionally dark surface too; do not let --paper become its text color. */
+footer {
+  background: #1b2b28;
+  color: #f6f3eb;
+}
+footer .eyebrow {
+  color: #85c8b5;
+}
+footer h2 {
+  color: #f6f3eb;
+}
+footer p {
+  color: #c0cbc4;
+}
+footer .btn {
+  border-color: #c5d1ca;
+  color: #f6f3eb;
+}
+footer .btn:hover {
+  background: #d4e8dc;
+  color: #1d2d29;
+}
+
+/* Dark theme: keep the prototype/hero controls readable when they inherit theme tokens. */
+:root[data-theme="dark"] .hero .btn:not(.primary) {
+  color: #edf2ed;
+  border-color: #8da29a;
+}
+:root[data-theme="dark"] .hero .btn.primary {
+  background: #edf2ed;
+  color: #1d2d29;
+  border-color: #edf2ed;
+}
