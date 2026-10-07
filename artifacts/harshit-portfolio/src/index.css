@@ -975,3 +975,67 @@ a:focus-visible, button:focus-visible { outline: 3px solid #bb7d31; outline-offs
     text-overflow: ellipsis;
   }
 }
+
+
+/* Case study: keep intentionally dark sections visually stable in both themes. */
+section.dark {
+  background: #1b2b28;
+  color: #f6f3eb;
+}
+section.dark .lead {
+  color: #c5d0c9;
+}
+section.dark .side p {
+  color: #aab9b2;
+}
+section.dark .num {
+  color: #85c8b5;
+}
+section.dark .quote {
+  background: #1d2d29;
+  color: #f6f3eb;
+}
+section.dark .quote small {
+  color: #aebbb4;
+}
+section.dark .quote strong {
+  color: #f6f3eb;
+}
+
+/* Responsive navigation for case study pages. */
+.case-study-nav-primary {
+  display: flex;
+  align-items: center;
+  gap: clamp(13px, 2vw, 25px);
+}
+.case-study-nav-theme {
+  display: flex;
+  align-items: center;
+}
+.case-study-mobile-nav {
+  display: none;
+}
+
+@media (max-width: 650px) {
+  .case-study-topbar .navin {
+    position: relative;
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 0;
+  }
+
+  .case-study-topbar .navlinks {
+    display: none;
+  }
+
+  .case-study-mobile-nav {
+    display: block;
+  }
+
+  .case-study-topbar .brand {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
