@@ -156,7 +156,7 @@ export default function PortfolioApp() {
       <Route path="/case-studies/:slug" component={DynamicCaseStudy} />
       <Route>
         <PortfolioNavigation />
-        <AskHarshitFloatingButton />
+        <AskHarshitFloatingChat />
         <main className="wrap not-found">
           <div className="num">Page not found</div>
           <h1>That page isn’t here.</h1>
