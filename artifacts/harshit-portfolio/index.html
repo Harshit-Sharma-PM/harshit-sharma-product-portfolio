@@ -3,6 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light dark" />
     <title>Harshit Sharma — Product Portfolio</title>
     <meta name="description" content="Harshit Sharma — Associate Digital Product Manager building digital products across financial services, customer operations, workflow platforms and GenAI." />
     <meta name="robots" content="index, follow" />
@@ -21,6 +22,16 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   </head>
   <body>
+    <script>
+      (() => {
+        try {
+          const saved = localStorage.getItem("harshit-portfolio-theme");
+          if (saved === "dark" || saved === "light") {
+            document.documentElement.dataset.theme = saved;
+          }
+        } catch {}
+      })();
+    </script>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
