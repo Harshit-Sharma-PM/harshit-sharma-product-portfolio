@@ -3,6 +3,7 @@ import { Link, Route, Switch, useParams } from 'wouter';
 import { caseStudies } from './case-studies/registry';
 import { AskHarshitAI } from './components/AskHarshitAI';
 import { ThemeToggle } from './components/ThemeToggle';
+import { MobileNavMenu } from './components/MobileNavMenu';
 
 function AskHarshitFloatingButton() {
   return (
@@ -23,12 +24,17 @@ function PortfolioNavigation() {
     <nav className="topbar portfolio-topbar" aria-label="Portfolio navigation">
       <div className="wrap navin">
         <Link className="brand" href="/">Harshit Sharma <span>·</span> Product Portfolio</Link>
-        <div className="navlinks">
-          <a href="/#about">About</a>
-          <a href="/#case-studies">Case studies</a>
-          <a href="/#ask-harshit">Ask Harshit AI</a>
-          <a href="https://www.linkedin.com/in/harshit-sharma-bb5a61286" target="_blank" rel="noopener noreferrer">LinkedIn ↗</a>
-          <ThemeToggle />
+        <div className="navlinks portfolio-navlinks">
+          <div className="portfolio-nav-primary">
+            <a href="/#about">About</a>
+            <a href="/#case-studies">Case studies</a>
+          </div>
+          <div className="portfolio-nav-actions">
+            <a href="/#ask-harshit">Ask Harshit AI</a>
+            <a href="https://www.linkedin.com/in/harshit-sharma-bb5a61286" target="_blank" rel="noopener noreferrer">LinkedIn ↗</a>
+            <ThemeToggle />
+          </div>
+          <MobileNavMenu />
         </div>
       </div>
     </nav>
