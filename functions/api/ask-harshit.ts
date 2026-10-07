@@ -269,7 +269,7 @@ export async function answerAskHarshit(request: Request, env: Env) {
   }
 
   const recruiterVisitorPattern =
-    /^(?:i['’]?m|i am|i work as|i work in)\s+(?:an?\s+)?(?:hr|human resources|recruiter|talent acquisition|talent partner|hiring manager)\b/i.test(question) ||
+    /^(?:(?:but|well|actually|yes[,\s]+)?\s*)(?:i['’]?m|i am|i work as|i work in)\s+(?:an?\s+)?(?:hr|human resources|recruiter|talent acquisition|talent partner|hiring manager)\b/i.test(question) ||
     /\b(?:i['’]?m|i am)\s+(?:an?\s+)?hr\b/i.test(question);
 
   if (recruiterVisitorPattern) {
