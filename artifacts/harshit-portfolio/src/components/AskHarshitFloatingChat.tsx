@@ -90,6 +90,12 @@ export function AskHarshitFloatingChat() {
   const canSend = useMemo(() => input.trim().length > 0 && !loading, [input, loading]);
 
   useEffect(() => {
+    const openAssistant = () => setOpen(true);
+    window.addEventListener("open-ask-harshit", openAssistant);
+    return () => window.removeEventListener("open-ask-harshit", openAssistant);
+  }, []);
+
+  useEffect(() => {
     if (!open) return;
 
     const handleKeyDown = (event: KeyboardEvent) => {
