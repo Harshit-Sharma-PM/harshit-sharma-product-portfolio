@@ -36,7 +36,7 @@ export function MobileNavMenu() {
           <div className="mobile-nav-links">
             <a href="/#about" onClick={closeMenu}>About</a>
             <a href="/#case-studies" onClick={closeMenu}>Case studies</a>
-            <a href="/#ask-harshit" onClick={closeMenu}>Ask Harshit AI</a>
+            <a href="/#ask-harshit" onClick={(event) => { event.preventDefault(); closeMenu(); window.dispatchEvent(new CustomEvent("open-ask-harshit")); }}>Ask Harshit AI</a>
             <a
               href="https://www.linkedin.com/in/harshit-sharma-bb5a61286"
               target="_blank"
