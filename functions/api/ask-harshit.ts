@@ -258,7 +258,7 @@ export async function answerAskHarshit(request: Request, env: Env) {
   // Conversational visitor-intent questions should not be forced through factual
   // portfolio retrieval. They are about how the visitor can use the assistant.
   const visitorIdentityPattern =
-    /^(?:who\s+am\s+i|what\s+do\s+you\s+know\s+about\s+me|do\s+you\s+know\s+who\s+i\s+am)\s*[?.!]*$/i;
+    /^(?:who\s+am\s+i|who\s+i\s+am|what\s+do\s+you\s+know\s+about\s+me|do\s+you\s+know\s+who\s+i\s+am|what\s+do\s+you\s+know\s+about\s+me)\s*[?.!]*$/i;
 
   if (visitorIdentityPattern.test(question)) {
     return json({
