@@ -1,3 +1,4 @@
+import "./AskHarshitFloatingChat.css";
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { Bot, Send, Sparkles, UserRound, X } from "lucide-react";
 
