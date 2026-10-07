@@ -233,6 +233,28 @@ export async function answerAskHarshit(request: Request, env: Env) {
     ? substantivePreviousUserQuestion + "\n" + question
     : question;
 
+  // Assistant-authorship questions are a distinct intent. Do not send them
+  // through generic semantic retrieval: words such as "built", "created",
+  // "prototype", and "AI" can otherwise pull in Saarthi AI or other case-study
+  // chunks. Resolve this intent directly from the dedicated portfolio evidence.
+  const assistantAuthorshipPattern =
+    /(?:who|what(?:\s+person)?|which\s+person).*(?:built|created|made|developed|designed).*(?:you|this\s+(?:assistant|ai)|the\s+(?:assistant|ai)|ask\s+harshit)/i.test(question) ||
+    /(?:did|has)\s+harshit\s+(?:build|create|make|develop|design)\s+(?:you|this\s+(?:assistant|ai)|ask\s+harshit)/i.test(question) ||
+    /(?:who|what).*(?:built|created|made|developed).*(?:you|yourself)/i.test(question) ||
+    /(?:i['’]?m\s+not\s+asking|i\s+said)\s+(?:who|what).*(?:built|created|made|developed)/i.test(question);
+
+  if (assistantAuthorshipPattern) {
+    const authorshipChunk = askHarshitKnowledge.find((chunk) => chunk.id === "ask-harshit-ai-built");
+
+    if (authorshipChunk) {
+      return json({
+        answer:
+          "Harshit Sharma built Ask Harshit AI as a portfolio project. It uses a retrieval-augmented generation (RAG) approach to retrieve grounded portfolio knowledge and generate answers about his experience, products, case studies and product thinking.",
+        sources: [{ title: authorshipChunk.title, section: authorshipChunk.section }],
+      });
+    }
+  }
+
   const semanticMatches = await semanticRetrieve(retrievalQuestion, env);
 
   const lexicalMatches = askHarshitKnowledge
