@@ -241,17 +241,19 @@ export function AskHarshitFloatingChat() {
         </div>
       ) : null}
 
-      <button
-        className="ask-ai-floating"
-        type="button"
-        onClick={() => setOpen(true)}
-        aria-label="Open Ask Harshit AI"
-        title="Ask Harshit AI"
-        aria-expanded={open}
-      >
-        <Bot size={18} aria-hidden="true" />
-        <span>Ask Harshit AI</span>
-      </button>
+      {!open ? (
+        <button
+          className="ask-ai-floating"
+          type="button"
+          onClick={() => setOpen(true)}
+          aria-label="Open Ask Harshit AI"
+          title="Ask Harshit AI"
+          aria-expanded={open}
+        >
+          <Bot size={18} aria-hidden="true" />
+          <span>Ask Harshit AI</span>
+        </button>
+      ) : null}
     </>
   );
 }
