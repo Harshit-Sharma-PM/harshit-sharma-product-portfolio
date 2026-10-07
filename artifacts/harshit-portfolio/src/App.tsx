@@ -59,7 +59,7 @@ export function SaarthiCaseStudy() {
         </div>
       </nav>
 
-      <main id="main">
+      <main id="main" className="case-study-main">
         <header id="top" className="wrap hero">
           <div className="hero-copy">
             <div className="eyebrow">0 → 1 AI Product Case Study</div>
