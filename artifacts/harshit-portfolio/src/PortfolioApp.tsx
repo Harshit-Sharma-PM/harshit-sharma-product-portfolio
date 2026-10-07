@@ -1,6 +1,5 @@
 import { Link, Route, Switch, useParams } from 'wouter';
 import { caseStudies } from './case-studies/registry';
-import { AskHarshitAI } from './components/AskHarshitAI';
 import { AskHarshitFloatingChat } from './components/AskHarshitFloatingChat';
 import { ThemeToggle } from './components/ThemeToggle';
 import { MobileNavMenu } from './components/MobileNavMenu';
@@ -16,7 +15,7 @@ function PortfolioNavigation() {
             <a href="/#case-studies">Case studies</a>
           </div>
           <div className="portfolio-nav-actions">
-            <a href="/#ask-harshit">Ask Harshit AI</a>
+            <a href="/#ask-harshit" onClick={(event) => { event.preventDefault(); window.dispatchEvent(new CustomEvent("open-ask-harshit")); }}>Ask Harshit AI</a>
             <a href="https://www.linkedin.com/in/harshit-sharma-bb5a61286" target="_blank" rel="noopener noreferrer">LinkedIn ↗</a>
             <ThemeToggle />
           </div>
@@ -112,7 +111,6 @@ function PortfolioHome() {
           </div>
         </section>
 
-        <AskHarshitAI />
       </main>
       <AskHarshitFloatingChat />
       <footer className="portfolio-footer">
