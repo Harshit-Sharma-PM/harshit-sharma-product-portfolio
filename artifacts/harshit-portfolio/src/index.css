@@ -837,3 +837,141 @@ a:focus-visible, button:focus-visible { outline: 3px solid #bb7d31; outline-offs
     margin: 2px 0 3px;
   }
 }
+
+
+/* Responsive portfolio navigation */
+.portfolio-nav-primary,
+.portfolio-nav-actions {
+  display: flex;
+  align-items: center;
+  gap: clamp(13px, 2vw, 25px);
+}
+
+.mobile-nav-menu {
+  display: none;
+  position: relative;
+}
+
+.mobile-nav-trigger {
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+  transition: color .2s, border-color .2s, background .2s;
+}
+
+.mobile-nav-trigger:hover,
+.mobile-nav-trigger:focus-visible {
+  color: var(--teal);
+  border-color: var(--teal);
+  outline: none;
+}
+
+.mobile-nav-panel {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  width: min(280px, calc(100vw - 36px));
+  padding: 9px;
+  border: 1px solid var(--line);
+  background: var(--paper);
+  box-shadow: 0 18px 42px rgba(20, 35, 31, .14);
+}
+
+.mobile-nav-links {
+  display: grid;
+}
+
+.mobile-nav-links a {
+  display: block;
+  padding: 12px 11px;
+  color: var(--ink);
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 600;
+  border-bottom: 1px solid var(--line);
+}
+
+.mobile-nav-links a:hover {
+  color: var(--teal);
+  background: var(--teal-soft);
+}
+
+.mobile-nav-theme {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 11px;
+}
+
+.mobile-nav-theme > span {
+  color: var(--muted);
+  font-family: var(--app-font-mono);
+  font-size: 10px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.mobile-nav-theme .theme-toggle {
+  margin: 0;
+}
+
+:root[data-theme="dark"] .mobile-nav-trigger {
+  border-color: #50625b;
+  color: #bdc9c2;
+}
+
+:root[data-theme="dark"] .mobile-nav-panel {
+  background: #151f1d;
+  border-color: var(--line);
+  box-shadow: 0 18px 42px rgba(0,0,0,.35);
+}
+
+:root[data-theme="dark"] .mobile-nav-links a {
+  color: var(--ink);
+  border-bottom-color: var(--line);
+}
+
+:root[data-theme="dark"] .mobile-nav-links a:hover {
+  color: var(--teal);
+  background: #203832;
+}
+
+@media (max-width: 650px) {
+  .portfolio-topbar .navin {
+    position: relative;
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 0;
+  }
+
+  .portfolio-topbar .navlinks {
+    width: auto;
+    padding: 0;
+    gap: 0;
+    overflow: visible;
+  }
+
+  .portfolio-nav-primary,
+  .portfolio-nav-actions {
+    display: none;
+  }
+
+  .mobile-nav-menu {
+    display: block;
+  }
+
+  .portfolio-topbar .brand {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
