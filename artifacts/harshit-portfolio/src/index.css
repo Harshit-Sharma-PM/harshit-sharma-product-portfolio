@@ -1144,3 +1144,30 @@ footer .btn:hover {
     bottom: max(16px, env(safe-area-inset-bottom));
   }
 }
+
+
+/* Case-study mobile/tablet layout: use the available viewport width instead of a narrow max-width. */
+@media (max-width: 900px) {
+  .case-study-main .wrap {
+    width: calc(100% - 36px);
+    max-width: none;
+  }
+
+  .case-study-main .hero {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* The floating launcher is intentionally icon-only; the navigation already names Ask Harshit AI. */
+.ask-ai-floating {
+  width: 46px;
+  height: 46px;
+  min-height: 46px;
+  padding: 0;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+.ask-ai-floating span {
+  display: none;
+}
