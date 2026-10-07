@@ -1127,3 +1127,20 @@ footer .btn:hover {
   color: #1d2d29;
   border-color: #edf2ed;
 }
+
+
+/* Keep the Ask Harshit AI launcher pinned to the phone viewport on case-study pages. */
+.ask-ai-floating {
+  position: fixed !important;
+  right: 16px;
+  bottom: 16px;
+  z-index: 2147483647;
+  max-width: calc(100vw - 32px);
+}
+
+@media (max-width: 650px) {
+  .ask-ai-floating {
+    right: 16px;
+    bottom: max(16px, env(safe-area-inset-bottom));
+  }
+}
