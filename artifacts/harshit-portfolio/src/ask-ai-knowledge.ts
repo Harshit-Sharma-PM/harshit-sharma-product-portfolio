@@ -7,6 +7,48 @@ export type KnowledgeChunk = {
 
 export const askHarshitKnowledge: KnowledgeChunk[] = [
   {
+    id: "ask-harshit-ai-built",
+    title: "Ask Harshit AI — built by Harshit",
+    section: "AI portfolio project",
+    text:
+      "Ask Harshit AI is an AI assistant that Harshit Sharma designed and built for his own product portfolio. It uses a retrieval-augmented generation (RAG) approach to retrieve grounded portfolio knowledge and generate answers. It is a portfolio project created by Harshit to demonstrate practical GenAI, RAG, retrieval, prompting, grounding and product thinking.",
+  },
+  {
+    id: "ask-harshit-ai-purpose",
+    title: "Ask Harshit AI — product purpose",
+    section: "AI portfolio project",
+    text:
+      "Harshit built Ask Harshit AI to make his portfolio interactive and easier to explore. Instead of requiring a visitor to navigate every section manually, the assistant lets recruiters, hiring managers and other visitors ask natural questions about his experience, products, case studies, skills and product thinking. The product goal is to provide useful answers while staying grounded in portfolio evidence.",
+  },
+  {
+    id: "ask-harshit-ai-architecture",
+    title: "Ask Harshit AI — technical architecture",
+    section: "AI portfolio project",
+    text:
+      "Ask Harshit AI uses a RAG architecture. The portfolio knowledge is stored as structured knowledge chunks and indexed as vector embeddings. A user question is embedded with BGE-small, relevant evidence is retrieved from Cloudflare Vectorize, and GLM-4.7-Flash generates the response from the retrieved evidence. The assistant also uses lexical retrieval and conversation context to improve retrieval reliability.",
+  },
+  {
+    id: "ask-harshit-ai-conversation",
+    title: "Ask Harshit AI — conversational retrieval",
+    section: "AI portfolio project",
+    text:
+      "Ask Harshit AI is designed to support natural follow-up questions. Conversation history can be used to resolve references such as 'it', 'that product', 'he', 'his', and 'you' before retrieving portfolio evidence. The assistant should understand that 'you' can refer to Ask Harshit AI and 'he' can refer to Harshit when the conversation establishes those references. The rewritten retrieval query is used only to find evidence; factual answers still come from portfolio knowledge.",
+  },
+  {
+    id: "ask-harshit-ai-grounding",
+    title: "Ask Harshit AI — grounding and guardrails",
+    section: "AI portfolio project",
+    text:
+      "Ask Harshit AI is intended to answer from verified portfolio evidence rather than general model knowledge. It distinguishes professional experience from case-study and prototype work, avoids inventing unsupported employers or responsibilities, and should acknowledge when the portfolio does not contain enough evidence. Visitor identity is not inferred from the portfolio: when a visitor asks 'who am I?', the assistant should explain that it does not know the visitor personally.",
+  },
+  {
+    id: "ask-harshit-ai-iterations",
+    title: "Ask Harshit AI — product iterations",
+    section: "AI portfolio project",
+    text:
+      "The assistant evolved through product iterations: an initial RAG implementation exposed retrieval collisions between similarly worded portfolio topics; semantic retrieval was strengthened with lexical evidence and topic boundaries; conversational follow-up handling was then introduced so natural references can be resolved before retrieval. These iterations are part of the product learning story.",
+  },
+  {
     id: "profile-overview",
     title: "Portfolio profile",
     section: "Overview",

@@ -1,23 +1,9 @@
-import { Bot } from 'lucide-react';
 import { Link, Route, Switch, useParams } from 'wouter';
 import { caseStudies } from './case-studies/registry';
 import { AskHarshitAI } from './components/AskHarshitAI';
+import { AskHarshitFloatingChat } from './components/AskHarshitFloatingChat';
 import { ThemeToggle } from './components/ThemeToggle';
 import { MobileNavMenu } from './components/MobileNavMenu';
-
-function AskHarshitFloatingButton() {
-  return (
-    <a
-      className="ask-ai-floating"
-      href="/#ask-harshit"
-      aria-label="Ask Harshit AI"
-      title="Ask Harshit AI"
-    >
-      <Bot size={18} aria-hidden="true" />
-      <span>Ask Harshit AI</span>
-    </a>
-  );
-}
 
 function PortfolioNavigation() {
   return (
@@ -128,7 +114,7 @@ function PortfolioHome() {
 
         <AskHarshitAI />
       </main>
-      <AskHarshitFloatingButton />
+      <AskHarshitFloatingChat />
       <footer className="portfolio-footer">
         <div className="wrap footer-row">
           <span>Harshit Sharma · Product Portfolio</span>
@@ -155,7 +141,12 @@ function DynamicCaseStudy() {
     );
   }
   const StudyPage = study.page;
-  return <StudyPage />;
+  return (
+    <>
+      <StudyPage />
+      <AskHarshitFloatingChat />
+    </>
+  );
 }
 
 export default function PortfolioApp() {
@@ -165,7 +156,7 @@ export default function PortfolioApp() {
       <Route path="/case-studies/:slug" component={DynamicCaseStudy} />
       <Route>
         <PortfolioNavigation />
-        <AskHarshitFloatingButton />
+        <AskHarshitFloatingChat />
         <main className="wrap not-found">
           <div className="num">Page not found</div>
           <h1>That page isn’t here.</h1>
