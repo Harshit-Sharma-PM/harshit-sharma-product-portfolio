@@ -42,6 +42,7 @@ export function CaseStudyNavMenu() {
             <a href="#ai" onClick={closeMenu}>AI architecture</a>
             <a href="#gtm" onClick={closeMenu}>GTM</a>
             <a href="#reflection" onClick={closeMenu}>Reflection</a>
+            <a href="/#ask-harshit" onClick={closeMenu}>Ask Harshit AI</a>
           </div>
 
           <div className="mobile-nav-theme">

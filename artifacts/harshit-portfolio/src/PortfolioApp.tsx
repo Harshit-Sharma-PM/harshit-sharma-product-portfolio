@@ -155,12 +155,7 @@ function DynamicCaseStudy() {
     );
   }
   const StudyPage = study.page;
-  return (
-    <>
-      <StudyPage />
-      <AskHarshitFloatingButton />
-    </>
-  );
+  return <StudyPage />;
 }
 
 export default function PortfolioApp() {
