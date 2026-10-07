@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { ThemeToggle } from './components/ThemeToggle';
 
 const prototypeUrl = 'https://www.figma.com/make/By4bqAZiztzXXdqK9Jrnb3/Create-Prototype?fullscreen=1&t=xBtHR69JGtA40TiJ-1&code-node-id=0-9';
 
@@ -47,6 +48,7 @@ export function SaarthiCaseStudy() {
             <a href="#ai">AI</a>
             <a href="#gtm">GTM</a>
             <a href="#reflection">Reflection</a>
+            <ThemeToggle />
           </div>
         </div>
       </nav>
