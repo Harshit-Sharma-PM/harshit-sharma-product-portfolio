@@ -7,6 +7,13 @@ export type KnowledgeChunk = {
 
 export const askHarshitKnowledge: KnowledgeChunk[] = [
   {
+    id: "ask-harshit-ai-built",
+    title: "Ask Harshit AI — built by Harshit",
+    section: "AI portfolio project",
+    text:
+      "Ask Harshit AI is an AI assistant that Harshit designed and built for his own product portfolio. It uses a retrieval-augmented generation (RAG) approach to retrieve grounded portfolio knowledge and generate answers. It is a portfolio project created by Harshit to demonstrate practical GenAI, RAG, retrieval, prompting, grounding and product thinking. When asked who built the assistant, answer that Harshit built Ask Harshit AI; do not say that it was not built by Harshit.",
+  },
+  {
     id: "profile-overview",
     title: "Portfolio profile",
     section: "Overview",
