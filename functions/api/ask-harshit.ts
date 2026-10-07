@@ -255,6 +255,37 @@ export async function answerAskHarshit(request: Request, env: Env) {
     }
   }
 
+  // Conversational visitor-intent questions should not be forced through factual
+  // portfolio retrieval. They are about how the visitor can use the assistant.
+  const visitorIdentityPattern =
+    /^(?:who\s+am\s+i|what\s+do\s+you\s+know\s+about\s+me|do\s+you\s+know\s+who\s+i\s+am)\s*[?.!]*$/i;
+
+  if (visitorIdentityPattern.test(question)) {
+    return json({
+      answer:
+        "I don't know who you are personally, but I can help you explore Harshit's portfolio. If you're a recruiter, hiring manager, product professional, or just curious about his work, ask me about his product experience, case studies, skills, or specific products.",
+      sources: [],
+    });
+  }
+
+  const recruiterVisitorPattern =
+    /^(?:i['’]?m|i am|i work as|i work in)\s+(?:an?\s+)?(?:hr|human resources|recruiter|talent acquisition|talent partner|hiring manager)\b/i.test(question) ||
+    /\b(?:i['’]?m|i am)\s+(?:an?\s+)?hr\b/i.test(question);
+
+  if (recruiterVisitorPattern) {
+    const profileChunk =
+      askHarshitKnowledge.find((chunk) => chunk.id === "profile-overview") ??
+      askHarshitKnowledge.find((chunk) => /profile/i.test(chunk.title));
+
+    return json({
+      answer:
+        "Absolutely. If you're in HR or recruiting, you can ask me about Harshit's product experience, the Product Manager roles and product areas reflected in his portfolio, his experience with internal platforms and case-management workflows, his GenAI/RAG work, or any specific case study. I can also help you understand his background and the kind of product problems he works on.",
+      sources: profileChunk
+        ? [{ title: profileChunk.title, section: profileChunk.section }]
+        : [],
+    });
+  }
+
   const semanticMatches = await semanticRetrieve(retrievalQuestion, env);
 
   const lexicalMatches = askHarshitKnowledge
