@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import { ThemeToggle } from './components/ThemeToggle';
+import { CaseStudyNavMenu } from './components/CaseStudyNavMenu';
 
 const prototypeUrl = 'https://www.figma.com/make/By4bqAZiztzXXdqK9Jrnb3/Create-Prototype?fullscreen=1&t=xBtHR69JGtA40TiJ-1&code-node-id=0-9';
 
@@ -36,20 +37,25 @@ export function SaarthiCaseStudy() {
   return (
     <>
       <a className="skip-link" href="#main">Skip to content</a>
-      <nav className="topbar" aria-label="Case study navigation">
+      <nav className="topbar case-study-topbar" aria-label="Case study navigation">
         <div className="wrap navin">
           <a className="brand" href="/">Harshit Sharma <span>·</span> Product Portfolio</a>
           <div className="navlinks">
-            <a href="/">All work</a>
-            <a href="#problem">Problem</a>
-            <a href="#discovery">Discovery</a>
-            <a href="#strategy">Strategy</a>
-            <a href="#mvp">MVP</a>
-            <a href="#ai">AI</a>
-            <a href="#gtm">GTM</a>
-            <a href="#reflection">Reflection</a>
-            <ThemeToggle />
+            <div className="case-study-nav-primary">
+              <a href="/">All work</a>
+              <a href="#problem">Problem</a>
+              <a href="#discovery">Discovery</a>
+              <a href="#strategy">Strategy</a>
+              <a href="#mvp">MVP</a>
+              <a href="#ai">AI</a>
+              <a href="#gtm">GTM</a>
+              <a href="#reflection">Reflection</a>
+            </div>
+            <div className="case-study-nav-theme">
+              <ThemeToggle />
+            </div>
           </div>
+          <CaseStudyNavMenu />
         </div>
       </nav>
 
