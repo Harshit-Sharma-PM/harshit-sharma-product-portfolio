@@ -228,15 +228,52 @@ async function resolveConversationQuery(
       max_completion_tokens: 120,
     });
 
-    const raw = extractAiText(result);
-    const parsed = JSON.parse(raw) as Partial<ConversationResolution>;
+    function findResolution(value: unknown, depth = 0): Partial<ConversationResolution> | null {
+      if (depth > 6 || value == null) return null;
+
+      if (typeof value === "string") {
+        try {
+          const parsed = JSON.parse(value) as Partial<ConversationResolution>;
+          return parsed && typeof parsed === "object" ? parsed : null;
+        } catch {
+          return null;
+        }
+      }
+
+      if (typeof value !== "object") return null;
+
+      if (Array.isArray(value)) {
+        for (const item of value) {
+          const found = findResolution(item, depth + 1);
+          if (found) return found;
+        }
+        return null;
+      }
+
+      const object = value as Record<string, unknown>;
+      if (typeof object.searchQuery === "string") {
+        return {
+          searchQuery: object.searchQuery,
+          resolved: Boolean(object.resolved),
+        };
+      }
+
+      for (const key of ["parsed", "response", "result", "output", "content", "message", "choices"]) {
+        const found = findResolution(object[key], depth + 1);
+        if (found) return found;
+      }
+
+      return null;
+    }
+
+    const parsed = findResolution(result);
     const searchQuery =
-      typeof parsed.searchQuery === "string" ? parsed.searchQuery.trim() : "";
+      typeof parsed?.searchQuery === "string" ? parsed.searchQuery.trim() : "";
 
     if (searchQuery && searchQuery.length <= 500) {
       return {
         searchQuery,
-        resolved: Boolean(parsed.resolved),
+        resolved: Boolean(parsed?.resolved),
       };
     }
   } catch {
@@ -302,11 +339,6 @@ export async function answerAskHarshit(request: Request, env: Env) {
     .filter((turn) => typeof turn.content === "string")
     .map((turn) => ({ role: turn.role, content: turn.content!.trim() }))
     .filter((turn) => turn.content);
-
-  const recentUserQuestions = recentTurns
-    .filter((turn) => turn.role === "user")
-    .map((turn) => turn.content)
-    .slice(-6);
 
   const conversationResolution = await resolveConversationQuery(question, recentTurns, env);
   const retrievalQuestion = conversationResolution.searchQuery;
