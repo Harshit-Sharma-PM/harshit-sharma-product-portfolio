@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { Link } from 'wouter';
 import { ThemeToggle } from '../components/ThemeToggle';
 import { CaseStudyNavMenu } from '../components/CaseStudyNavMenu';
@@ -25,7 +26,7 @@ function Section({ id, number, label, children, tone = '' }: {
   id?: string;
   number: string;
   label: string;
-  children: React.ReactNode;
+  children: ReactNode;
   tone?: string;
 }) {
   return (
