@@ -187,8 +187,8 @@ export const askHarshitKnowledge: KnowledgeChunk[] = [
     section: "Education",
     text:
       "Harshit studied BA Economics at Delhi University and completed a BITS School of Management program in Product Management with Generative and Agentic AI. This is the education background represented in his portfolio.",
-  },,
-{
+  },
+  {
     id: "amex-product-management-contribution",
     title: "American Express — product management contribution and scope",
     section: "Professional experience · Product delivery",
@@ -209,13 +209,7 @@ export const askHarshitKnowledge: KnowledgeChunk[] = [
     text:
       "A GS Automation Acceleration launch announcement for UK proactive and reactive Credit Balance Refund (CBR) reported approximately 60% automation, approximately 350,000 annual cases, and approximately 18 FTE in annualized savings. The announcement described automation increasing from approximately 1–2% to around 60%. These figures describe the broader initiative and its reported business outcomes; they are not an individually attributable impact metric for Harshit. Preserve the UK scope when using these numbers. Do not assign these figures to the separate France, Germany and Austria launch context without evidence.",
   },
-  {
-    id: "cbr-outcome-interpretation",
-    title: "Credit Balance Refund — how to explain business value",
-    section: "Professional experience · Outcome interpretation",
-    text:
-      "The business value of Credit Balance Refund automation can be explained through three dimensions: scale (about 350K annual UK proactive and reactive cases in the cited launch announcement), automation (about 60% reported automation versus a prior level around 1–2%), and capacity (about 18 annualized FTE savings reported). Present these as initiative-level results from a launch announcement, not as a causal result personally delivered by Harshit. Harshit’s own contribution should be described separately in terms of product workflow understanding, requirement and scenario validation, UAT, exception coverage and launch readiness where relevant.",
-  },
+
   {
     id: "cbr-product-workflow",
     title: "Credit Balance Refund — workflow and product validation",
@@ -258,11 +252,5 @@ export const askHarshitKnowledge: KnowledgeChunk[] = [
     text:
       "Keep professional American Express product/UAT experience separate from individual portfolio case studies. CLIC, Credit Balance Refund, App Controls, Dispute Payment Management and BI case elimination are professional-work contexts. Ask Harshit AI is an individual portfolio assistant build. Saarthi AI is an individual 0-to-1 concept and prototype supported by product strategy, PRD, MVP definition, user journeys and proposed AI architecture; it is not a claimed production launch. Do not present prototype assumptions or proposed architecture as measured production outcomes.",
   },
-  {
-    id: "cbr-metrics-geography-guardrail",
-    title: "CBR metric geography and attribution guardrail",
-    section: "Grounding · Metrics",
-    text:
-      "Use the CBR automation figures only with their correct context: a GS Automation Acceleration launch announcement for UK proactive and reactive Credit Balance Refunds reported about 60% automation, around 350K annual case volume, and around 18 annualized FTE savings, with automation rising from roughly 1–2% to roughly 60%. Other CBR launch context mentioned France, Germany and Austria. Do not merge geographies or imply the UK announcement metrics apply to every country. Describe the figures as reported program outcomes, not Harshit’s individual measured impact.",
-  },
+
 ];
