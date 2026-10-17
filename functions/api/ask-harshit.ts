@@ -356,7 +356,7 @@ export async function answerAskHarshit(request: Request, env: Env) {
     /\\b(?:launched|launch|production|live|shipped)\\b/i.test(question);
 
   if (isSaarthiProductionStatusQuestion) {
-    const chunk = askHarshitKnowledge.find((item) => item.id === "saarthi-ai");
+    const chunk = askHarshitKnowledge.find((item) => item.id === "saarthi-overview");
     return json({
       answer: "No. Saarthi AI was an individual concept and prototype, rather than a production product launched by Harshit. The portfolio describes product strategy, PRD, MVP definition and user journeys; it was not launched to production, and there is no claim of a production launch.",
       sources: chunk ? [{ title: chunk.title, section: chunk.section }] : [],
