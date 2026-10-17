@@ -94,10 +94,22 @@ function PortfolioHome() {
             <div className="case-list">
               {caseStudies.map((study, index) => (
                 <article className="case-card" key={study.slug}>
-                  <div className="case-card-art" aria-hidden="true">
+                  <div className={`case-card-art ${study.slug === 'ask-harshit-ai' ? 'ask-harshit-art' : 'saarthi-art'}`} aria-hidden="true">
                     <span className="case-art-number">0{index + 1}</span>
-                    <div className="case-art-orbit"><i /><i /><i /></div>
-                    <span className="case-art-word">{study.title}</span>
+                    {study.slug === 'ask-harshit-ai' ? (
+                      <div className="rag-art">
+                        <div className="rag-art-query"><span>QUESTION</span><b>How does it work?</b></div>
+                        <div className="rag-art-connector"><i /><i /><i /></div>
+                        <div className="rag-art-retrieval"><span className="rag-art-spark">✳</span><div><b>Vector retrieval</b><small>Relevant knowledge chunks</small></div></div>
+                        <div className="rag-art-answer"><span>GROUNDED ANSWER</span><i /><i /><i /></div>
+                        <div className="rag-art-label">ASK → RETRIEVE → RESPOND</div>
+                      </div>
+                    ) : (
+                      <>
+                        <div className="case-art-orbit"><i /><i /><i /></div>
+                        <span className="case-art-word">{study.title}</span>
+                      </>
+                    )}
                   </div>
                   <div className="case-card-copy">
                     <div className="case-meta"><span>{study.category}</span><span>Case study 0{index + 1}</span></div>
