@@ -271,7 +271,8 @@
     "manualReview": true,
     "mustNotReturnAnySources": true
   }
-  ,{
+  },
+  {
     "id": "creator-direct-you",
     "category": "intent-routing",
     "question": "Who built you?",
