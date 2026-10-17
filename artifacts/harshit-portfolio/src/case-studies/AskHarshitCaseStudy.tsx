@@ -151,15 +151,19 @@ export function AskHarshitCaseStudy() {
         </Section>
 
         <Section id="measurement" number="06 / Measurement" label="Separate infrastructure telemetry from product quality." tone="ahi-dark">
-          <h2>Define a benchmark before claiming success.</h2>
-          <p className="lead">A successful vector query does not prove that the final answer is correct. The next step is a labeled evaluation set covering known facts, missing facts, ambiguous queries, and multi-topic questions.</p>
+          <h2>Regression-test every change; judge answer quality separately.</h2>
+          <p className="lead">The project now has a repeatable GitHub Actions evaluation suite with 32 saved questions: the original 31-case baseline plus a CLIC contribution case to check whether the assistant explains product execution, requirements, workflow analysis and BI case elimination—not only UAT tasks.</p>
           <div className="ahi-metrics">
-            {metrics.map((metric, index) => <article key={metric.title}><span>{String(index + 1).padStart(2, '0')}</span><b>{metric.title}</b><p>{metric.description}</p></article>)}
+            {metrics.map((metric, index) => <article key={metric.title}><span>{String(index + 1).padStart(2, "0")}</span><b>{metric.title}</b><p>{metric.description}</p></article>)}
           </div>
-          <div className="ahi-benchmark"><span>PROPOSED ACCEPTANCE CRITERION</span><b>≥ 90% grounded answer correctness</b><p>Target to test against a manually verified question set — not an achieved result. Also track critical unsupported claims separately.</p></div>
-          <p className="ahi-dark-note">Historical Vectorize query counts and query latency are infrastructure observations only. They must not be presented as answer accuracy or end-to-end response time.</p>
+          <div className="ahi-card-grid ahi-card-grid-3">
+            <article className="ahi-card"><span>01 · AUTOMATED</span><h3>Regression signals</h3><p>Checks HTTP/request failures, expected answer signals, forbidden phrases, source titles and unexpected sources for abstention cases.</p></article>
+            <article className="ahi-card"><span>02 · OBSERVABILITY</span><h3>Runtime timing</h3><p>Reports end-to-end request latency and available Server-Timing summaries for processing stages.</p></article>
+            <article className="ahi-card"><span>03 · HUMAN REVIEW</span><h3>Grounded quality</h3><p>Keyword checks cannot prove that claims are supported. Manually review flagged cases and sample passing answers.</p></article>
+          </div>
+          <div className="ahi-benchmark"><span>PROPOSED ACCEPTANCE CRITERION</span><b>≥ 90% grounded answer correctness</b><p>Target to test against a manually verified question set—not an achieved result. Also track critical unsupported claims separately.</p></div>
+          <p className="ahi-dark-note">The previous 31-case baseline passed 31/31 before the new CLIC case was added. The updated 32-case suite needs a fresh run before reporting its current pass rate. Cost per 100 questions remains unmeasured. Latency and regression pass rates are not substitutes for human-judged answer correctness.</p>
         </Section>
-
         <Section id="tradeoffs" number="07 / Trade-offs" label="Choose the simplest architecture that fits the problem.">
           <h2>Why this architecture fits a small, changing knowledge base.</h2>
           <div className="ahi-tradeoff-table">
@@ -179,7 +183,7 @@ export function AskHarshitCaseStudy() {
             <article className="ahi-card"><span>RELIABILITY</span><h3>Measure what matters</h3><p>Evaluate retrieval and generated answers separately, then optimize using observed failure patterns.</p></article>
           </div>
           <h3 className="ahi-next-title">Next iteration</h3>
-          <ol className="ahi-next-steps"><li>Create a 30–50 question labeled test set.</li><li>Measure retrieval relevance, grounded correctness, abstention, latency and API failures.</li><li>Compare chunking, top-K, metadata filtering and hybrid retrieval.</li><li>Review security controls, knowledge freshness and cost under representative use.</li></ol>
+          <ol className="ahi-next-steps"><li>Rerun the full 32-case regression suite after relevant changes and review failures.</li><li>Manually judge groundedness for critical answers and sample passing cases.</li><li>Use observed failures to tune retrieval, topic routing and abstention.</li><li>Measure cost from actual platform usage/billing and review performance under representative use.</li></ol>
           <div className="ahi-thesis"><span>KEY TAKEAWAY</span><p>A useful AI product is not just an LLM call. It is a coordinated system of information, retrieval, integrations, guardrails, evaluation, and user experience.</p></div>
         </Section>
 
