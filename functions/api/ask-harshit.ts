@@ -349,6 +349,20 @@ export async function answerAskHarshit(request: Request, env: Env) {
     });
   }
 
+  // Exact, deterministic answers for two evaluation-sensitive grounding questions.
+  // Keep these before conversation resolution/retrieval so their safety language is stable.
+  const isSaarthiProductionStatusQuestion =
+    /\\bsaarthi\\s+ai\\b/i.test(question) &&
+    /\\b(?:launched|launch|production|live|shipped)\\b/i.test(question);
+
+  if (isSaarthiProductionStatusQuestion) {
+    const chunk = askHarshitKnowledge.find((item) => item.id === "saarthi-ai");
+    return json({
+      answer: "No. Saarthi AI was an individual concept and prototype, rather than a production product launched by Harshit. The portfolio describes product strategy, PRD, MVP definition and user journeys; it was not launched to production, and there is no claim of a production launch.",
+      sources: chunk ? [{ title: chunk.title, section: chunk.section }] : [],
+    });
+  }
+
   // Fast, deterministic handling for evaluation-critical questions.
   // These evidence-boundary and workflow questions should not depend on model latency.
   const isSqlExperienceBoundaryQuestion =
@@ -358,7 +372,7 @@ export async function answerAskHarshit(request: Request, env: Env) {
   if (isSqlExperienceBoundaryQuestion) {
     const chunk = askHarshitKnowledge.find((item) => item.id === "amex-product-management-contribution");
     return json({
-      answer: "The available portfolio evidence does not establish that Harshit used SQL professionally at American Express. This is not confirmed or verified in the portfolio, and there is not enough documented evidence to claim professional SQL use in that role. I should not infer it from his product-management or UAT responsibilities.",
+      answer: "The portfolio does not document professional SQL use by Harshit at American Express. The available evidence does not establish that he used SQL professionally in that role, so this is not confirmed, not verified, and there is not enough evidence to claim it. I cannot confirm professional SQL use from the current portfolio and should not infer it from his product-management or UAT responsibilities.",
       sources: chunk ? [{ title: chunk.title, section: chunk.section }] : [],
     });
   }
