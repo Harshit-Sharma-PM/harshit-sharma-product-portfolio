@@ -1,0 +1,35 @@
+name: Evaluate Ask Harshit AI
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  evaluate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Run live regression evaluation
+        env:
+          ASK_HARSHIT_EVAL_URL: https://harshit-sharma-product-portfolio.pages.dev/api/ask-harshit
+          ASK_HARSHIT_EVAL_DELAY_MS: 6500
+        run: node scripts/evaluate-ask-harshit.mjs
+
+      - name: Upload evaluation report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ask-harshit-evaluation-report
+          path: ask-harshit-eval-report.json
+          if-no-files-found: ignore
+          retention-days: 30
