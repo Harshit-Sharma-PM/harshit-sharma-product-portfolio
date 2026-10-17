@@ -352,8 +352,8 @@ export async function answerAskHarshit(request: Request, env: Env) {
   // Fast, deterministic handling for evaluation-critical questions.
   // These evidence-boundary and workflow questions should not depend on model latency.
   const isSqlExperienceBoundaryQuestion =
-    /\\bsql\\b/i.test(question) &&
-    /\\b(?:professionally|professional|at american express|at amex|used|experience)\\b/i.test(question);
+    /\bsql\b/i.test(question) &&
+    /\b(?:professionally|professional|at american express|at amex|used|experience)\b/i.test(question);
 
   if (isSqlExperienceBoundaryQuestion) {
     const chunk = askHarshitKnowledge.find((item) => item.id === "amex-product-management-contribution");
@@ -364,8 +364,8 @@ export async function answerAskHarshit(request: Request, env: Env) {
   }
 
   const isCostPerHundredQuestion =
-    /\\b(?:cost per 100|cost for 100|100 questions|100 queries)\\b/i.test(question) &&
-    /\\b(?:cost|price|spend|billing|questions|queries)\\b/i.test(question);
+    /\b(?:cost per 100|cost for 100|100 questions|100 queries)\b/i.test(question) &&
+    /\b(?:cost|price|spend|billing|questions|queries)\b/i.test(question);
 
   if (isCostPerHundredQuestion) {
     const chunk = askHarshitKnowledge.find((item) => item.id === "ask-harshit-case-study-evaluation-plan");
@@ -376,9 +376,9 @@ export async function answerAskHarshit(request: Request, env: Env) {
   }
 
   const isCbrWorkflowQuestion =
-    /\\b(?:cbr|credit balance refund)\\b/i.test(question) &&
-    /\\b(?:workflow|walk me through|process|steps|flow)\\b/i.test(question) &&
-    !/\\b(?:business outcomes?|impact|automation|fte|annual cases|reported results?)\\b/i.test(question);
+    /\b(?:cbr|credit balance refund)\b/i.test(question) &&
+    /\b(?:workflow|walk me through|process|steps|flow)\b/i.test(question) &&
+    !/\b(?:business outcomes?|impact|automation|fte|annual cases|reported results?)\b/i.test(question);
 
   if (isCbrWorkflowQuestion) {
     const chunk = askHarshitKnowledge.find((item) => item.id === "cbr-flow");
