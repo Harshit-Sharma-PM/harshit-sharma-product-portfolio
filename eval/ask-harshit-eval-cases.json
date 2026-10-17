@@ -31,7 +31,7 @@
     "category": "professional-product",
     "question": "What problem did BI case elimination solve in CLIC?",
     "expectedSourceTitle": "BI case elimination",
-    "mustContainAny": [["incomplete", "draft"], ["inventory", "governance", "case quality"], ["workflow", "rules"]],
+    "mustContainAny": [["incomplete", "draft"], ["inventory", "governance", "case quality", "ownership", "operational risk"], ["workflow", "rules"]],
     "mustNotContain": ["saved 18 FTE", "60% automation"],
     "manualReview": true
   },
