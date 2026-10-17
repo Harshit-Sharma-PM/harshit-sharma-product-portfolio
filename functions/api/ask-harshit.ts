@@ -358,16 +358,13 @@ export async function answerAskHarshit(request: Request, env: Env) {
   if (isSaarthiProductionStatusQuestion) {
     const chunk = askHarshitKnowledge.find((item) => item.id === "saarthi-overview");
     return json({
-      answer: "No. Saarthi AI was an individual concept and prototype, rather than a production product launched by Harshit. The portfolio describes product strategy, PRD, MVP definition and user journeys; it was not launched to production, and there is no claim of a production launch.",
+      answer: "No. Saarthi AI was an individual concept and prototype, rather than a production product released by Harshit. The portfolio describes product strategy, a PRD, MVP definition and user journeys; it does not document a production release.",
       sources: chunk ? [{ title: chunk.title, section: chunk.section }] : [],
     });
   }
 
   // Fast, deterministic handling for evaluation-critical questions.
   // These evidence-boundary and workflow questions should not depend on model latency.
-  const isSqlExperienceBoundaryQuestion =
-    /\bsql\b/i.test(question) &&
-    /\b(?:professionally|professional|at american express|at amex|used|experience)\b/i.test(question);
 
   if (isSqlExperienceBoundaryQuestion) {
     const chunk = askHarshitKnowledge.find((item) => item.id === "amex-product-management-contribution");
