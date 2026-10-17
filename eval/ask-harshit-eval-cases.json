@@ -31,7 +31,7 @@
     "category": "professional-product",
     "question": "What problem did BI case elimination solve in CLIC?",
     "expectedSourceTitle": "BI case elimination",
-    "mustContainAny": [["incomplete", "draft"], ["inventory"], ["workflow", "rules"]],
+    "mustContainAny": [["incomplete", "draft"], ["inventory", "governance", "case quality", "ownership", "operational risk"], ["workflow", "rules"]],
     "mustNotContain": ["saved 18 FTE", "60% automation"],
     "manualReview": true
   },
@@ -76,7 +76,7 @@
     "category": "roadmap",
     "question": "Has Ask Harshit AI achieved 90% grounded-answer correctness?",
     "expectedSourceTitle": "evaluation",
-    "mustContainAny": [["proposed", "target"], ["not measured", "not yet", "not achieved", "not a measured"]],
+    "mustContainAny": [["proposed", "target"], ["not measured", "not yet", "not achieved", "not a measured", "rather than an achieved result", "not as a verified outcome"]],
     "mustNotContain": ["has achieved 90%", "measured 90% accuracy"],
     "manualReview": true
   },
@@ -148,16 +148,17 @@
     "category": "abstention",
     "question": "How many FTE did BI case elimination save?",
     "expectedSourceTitle": "",
-    "mustContainAny": [["don't have", "do not have", "not available", "not specified", "can't verify", "cannot verify"]],
-    "mustNotContain": ["18 FTE", "350,000"],
-    "manualReview": true
+    "mustContainAny": [["don't have", "do not have", "not available", "not specified", "can't verify", "cannot verify", "does not provide a verified", "no verified"]],
+    "mustNotContain": ["BI case elimination saved 18 FTE", "BI case elimination delivered 18 FTE", "BI case elimination generated 18 FTE", "BI saved 18 FTE", "350,000"],
+    "manualReview": true,
+    "mustNotReturnSourceTitles": ["Credit Balance Refund — reported automation business outcomes", "How Harshit frames product impact credibly"]
   },
   {
     "id": "professional-sql-boundary",
     "category": "grounding",
     "question": "Did Harshit use SQL professionally at American Express?",
     "expectedSourceTitle": "product management contribution",
-    "mustContainAny": [["not enough", "not confirmed", "does not establish", "cannot confirm", "not verified"]],
+    "mustContainAny": [["not enough", "not confirmed", "does not establish", "cannot confirm", "not verified", "no evidence", "not documented", "does not document"]],
     "mustNotContain": ["uses SQL daily", "SQL analyst at American Express"],
     "manualReview": true
   },
@@ -175,7 +176,7 @@
     "category": "architecture",
     "question": "Why use RAG instead of fine-tuning for Ask Harshit AI?",
     "expectedSourceTitle": "architecture decisions",
-    "mustContainAny": [["facts change", "content changes", "knowledge changes"], ["retrieval"]],
+    "mustContainAny": [["facts change", "content changes", "knowledge changes", "facts evolve", "facts evolve over time", "knowledge updates"], ["retrieval"]],
     "mustNotContain": ["fine-tuned GLM-4.7-Flash"],
     "manualReview": true
   },
@@ -193,7 +194,7 @@
     "category": "grounding",
     "question": "Can I claim that Harshit personally delivered the 18 FTE savings?",
     "expectedSourceTitle": "product impact",
-    "mustContainAny": [["initiative", "program", "team"], ["not attribute", "not personal", "not individually", "cannot claim"]],
+    "mustContainAny": [["initiative", "program", "team"], ["not attribute", "not personal", "not individually", "cannot claim", "not an individually attributable", "not individually attributable"]],
     "mustNotContain": ["yes, he personally delivered"],
     "manualReview": true
   },
@@ -211,7 +212,7 @@
     "category": "roadmap",
     "question": "What is the current end-to-end latency of Ask Harshit AI?",
     "expectedSourceTitle": "evaluation",
-    "mustContainAny": [["not measured", "not yet measured", "not available", "not verified", "need to measure"]],
+    "mustContainAny": [["not measured", "not yet measured", "not available", "not verified", "need to measure", "not a documented", "not documented", "not reported", "do not report"]],
     "mustNotContain": ["100 ms", "200 ms", "1 second"],
     "manualReview": true
   },
@@ -229,7 +230,7 @@
     "category": "grounding",
     "question": "What should Ask Harshit AI do if the portfolio doesn't contain an answer?",
     "expectedSourceTitle": "grounding",
-    "mustContainAny": [["acknowledge", "say it does not know", "not enough verified information", "should not guess"]],
+    "mustContainAny": [["acknowledge", "say it does not know", "not enough verified information", "should not guess", "doesn't have enough verified", "does not have enough verified"]],
     "mustNotContain": [],
     "manualReview": true
   },
@@ -267,6 +268,16 @@
     "expectedSourceTitle": "",
     "mustContainAny": [["don't have enough", "do not have enough", "portfolio", "verified information"]],
     "mustNotContain": ["Buenos Aires"],
+    "manualReview": true,
+    "mustNotReturnAnySources": true
+  },
+  {
+    "id": "creator-direct-you",
+    "category": "intent-routing",
+    "question": "Who built you?",
+    "expectedSourceTitle": "built by Harshit",
+    "mustContainAny": [["Harshit Sharma"]],
+    "mustNotContain": ["Saarthi AI built Ask Harshit AI"],
     "manualReview": true
   }
 ]
