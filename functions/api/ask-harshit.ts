@@ -415,6 +415,20 @@ export async function answerAskHarshit(request: Request, env: Env) {
     });
   }
 
+  // Keep the product-specific contribution answer deterministic: the model previously
+  // invented an unrelated "KM score" and overstated requirements ownership.
+  const isCbrContributionFastPath =
+    /\b(?:cbr|credit balance refund)\b/i.test(question) &&
+    /\b(?:contribution|contribute|involvement|role)\b/i.test(question);
+
+  if (isCbrContributionFastPath) {
+    const chunk = askHarshitKnowledge.find((item) => item.id === "cbr-overview");
+    return responseWithTiming({
+      answer: "Harshit contributed to the Credit Balance Refund (CBR) workflow across requirements, workflow understanding, validation of expected outcomes, exception scenarios, and launch readiness.",
+      sources: chunk ? [{ title: chunk.title, section: chunk.section }] : [],
+    });
+  }
+
   const recentTurns = (body.history ?? [])
     .filter((turn) => typeof turn.content === "string")
     .map((turn) => ({ role: turn.role, content: turn.content!.trim() }))
