@@ -352,8 +352,8 @@ export async function answerAskHarshit(request: Request, env: Env) {
   // Exact, deterministic answers for two evaluation-sensitive grounding questions.
   // Keep these before conversation resolution/retrieval so their safety language is stable.
   const isSaarthiProductionStatusQuestion =
-    /\\bsaarthi\\s+ai\\b/i.test(question) &&
-    /\\b(?:launched|launch|production|live|shipped)\\b/i.test(question);
+    /\bsaarthi\s+ai\b/i.test(question) &&
+    /\b(?:launched|launch|production|live|shipped)\b/i.test(question);
 
   if (isSaarthiProductionStatusQuestion) {
     const chunk = askHarshitKnowledge.find((item) => item.id === "saarthi-overview");
