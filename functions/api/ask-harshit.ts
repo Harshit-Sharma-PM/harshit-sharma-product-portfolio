@@ -299,7 +299,20 @@ async function resolveConversationQuery(
 
 export async function answerAskHarshit(request: Request, env: Env) {
   if (request.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
-  if (request.method !== "POST") return json({ error: "Method not allowed" }, { status: 405 });
+
+  // Expose stage timings for regression diagnosis without changing answer content.
+  const requestStartedAt = performance.now();
+  const stageTimings: Record<string, number> = {};
+  const responseWithTiming = (data: unknown, init: ResponseInit = {}) => {
+    const response = json(data, init);
+    const metrics = [
+      `total;dur=${(performance.now() - requestStartedAt).toFixed(1)}`,
+      ...Object.entries(stageTimings).map(([name, duration]) => `${name};dur=${duration.toFixed(1)}`),
+    ];
+    response.headers.set("server-timing", metrics.join(", "));
+    return response;
+  };
+  if (request.method !== "POST") return responseWithTiming({ error: "Method not allowed" }, { status: 405 });
 
   const clientId = request.headers.get("CF-Connecting-IP") || "anonymous";
   const now = Date.now();
@@ -308,7 +321,7 @@ export async function answerAskHarshit(request: Request, env: Env) {
     requestWindow.set(clientId, { count: 1, resetAt: now + WINDOW_MS });
   } else {
     if (window.count >= REQUEST_LIMIT) {
-      return json({ error: "Too many requests. Please try again in a minute." }, { status: 429 });
+      return responseWithTiming({ error: "Too many requests. Please try again in a minute." }, { status: 429 });
     }
     window.count += 1;
   }
@@ -318,7 +331,7 @@ export async function answerAskHarshit(request: Request, env: Env) {
   const question = rawQuestion ? normalizePortfolioQuestion(rawQuestion) : rawQuestion;
 
   if (!question || question.length > 500) {
-    return json({ error: "Please enter a question up to 500 characters." }, { status: 400 });
+    return responseWithTiming({ error: "Please enter a question up to 500 characters." }, { status: 400 });
   }
 
   // Visitor identity is conversational, not a portfolio fact. Resolve it before
@@ -327,7 +340,7 @@ export async function answerAskHarshit(request: Request, env: Env) {
     /^(?:who\s+am\s+i|who\s+i\s+am|what\s+do\s+you\s+know\s+about\s+me|do\s+you\s+know\s+who\s+i\s+am)\s*[?.!]*$/i;
 
   if (visitorIdentityPattern.test(question)) {
-    return json({
+    return responseWithTiming({
       answer:
         "I don't know who you are personally, but I can help you explore Harshit's portfolio. Ask me about his product experience, case studies, skills, or specific products.",
       sources: [],
@@ -340,7 +353,7 @@ export async function answerAskHarshit(request: Request, env: Env) {
   if (recruiterVisitorPattern.test(question)) {
     const profileChunk = askHarshitKnowledge.find((chunk) => chunk.id === "profile-overview");
 
-    return json({
+    return responseWithTiming({
       answer:
         "Absolutely. If you're in HR or recruiting, you can ask me about Harshit's product experience, the product areas reflected in his portfolio, his work around internal platforms and case-management workflows, his GenAI/RAG work, or any specific case study.",
       sources: profileChunk
@@ -357,7 +370,7 @@ export async function answerAskHarshit(request: Request, env: Env) {
 
   if (isSaarthiProductionStatusQuestion) {
     const chunk = askHarshitKnowledge.find((item) => item.id === "saarthi-overview");
-    return json({
+    return responseWithTiming({
       answer: "No. Saarthi AI was an individual concept and prototype, rather than a production product released by Harshit. The portfolio describes product strategy, a PRD, MVP definition and user journeys; it does not document a production release.",
       sources: chunk ? [{ title: chunk.title, section: chunk.section }] : [],
     });
@@ -371,7 +384,7 @@ export async function answerAskHarshit(request: Request, env: Env) {
 
   if (isSqlExperienceBoundaryQuestion) {
     const chunk = askHarshitKnowledge.find((item) => item.id === "amex-product-management-contribution");
-    return json({
+    return responseWithTiming({
       answer: "The portfolio does not document professional SQL use by Harshit at American Express. The available evidence does not establish that he used SQL professionally in that role, so this is not confirmed, not verified, and there is not enough evidence to claim it. I cannot confirm professional SQL use from the current portfolio and should not infer it from his product-management or UAT responsibilities.",
       sources: chunk ? [{ title: chunk.title, section: chunk.section }] : [],
     });
@@ -383,7 +396,7 @@ export async function answerAskHarshit(request: Request, env: Env) {
 
   if (isCostPerHundredQuestion) {
     const chunk = askHarshitKnowledge.find((item) => item.id === "ask-harshit-case-study-evaluation-plan");
-    return json({
+    return responseWithTiming({
       answer: "The cost per 100 Ask Harshit AI questions has not been measured or verified in the available portfolio evidence, so the cost is not currently available as a documented figure. It needs to be calculated from actual billing and usage data for representative requests; I should not guess a price.",
       sources: chunk ? [{ title: chunk.title, section: chunk.section }] : [],
     });
@@ -396,7 +409,7 @@ export async function answerAskHarshit(request: Request, env: Env) {
 
   if (isCbrWorkflowQuestion) {
     const chunk = askHarshitKnowledge.find((item) => item.id === "cbr-flow");
-    return json({
+    return responseWithTiming({
       answer: "The Credit Balance Refund (CBR) workflow proceeds through credit-balance identification, eligibility checks, bank-account or direct-debit validation, due-diligence and exception handling, and then refund processing. The portfolio references launches across France, Germany and Austria. Harshit's role is described in terms of understanding requirements and workflow behavior, validating expected outcomes and exceptions, supporting UAT, and launch readiness—not building the underlying production integrations.",
       sources: chunk ? [{ title: chunk.title, section: chunk.section }] : [],
     });
@@ -407,7 +420,9 @@ export async function answerAskHarshit(request: Request, env: Env) {
     .map((turn) => ({ role: turn.role, content: turn.content!.trim() }))
     .filter((turn) => turn.content);
 
+  const conversationStartedAt = performance.now();
   const conversationResolution = await resolveConversationQuery(question, recentTurns, env);
+  stageTimings.conversation = performance.now() - conversationStartedAt;
   const retrievalQuestion = conversationResolution.searchQuery;
   const isFollowUp = conversationResolution.resolved;
 
@@ -438,7 +453,7 @@ export async function answerAskHarshit(request: Request, env: Env) {
     const authorshipChunk = askHarshitKnowledge.find((chunk) => chunk.id === "ask-harshit-ai-built");
 
     if (authorshipChunk) {
-      return json({
+      return responseWithTiming({
         answer:
           "Harshit Sharma built Ask Harshit AI as a portfolio project. It uses a retrieval-augmented generation (RAG) approach to retrieve grounded portfolio knowledge and generate answers about his experience, products, case studies and product thinking.",
         sources: [{ title: authorshipChunk.title, section: authorshipChunk.section }],
@@ -456,7 +471,7 @@ export async function answerAskHarshit(request: Request, env: Env) {
 
   if (isCaseVsProfessionalWorkQuestion) {
     const chunk = askHarshitKnowledge.find((item) => item.id === "professional-work-vs-case-studies");
-    return json({
+    return responseWithTiming({
       answer: "Harshit's professional experience includes his product work at American Express on internal servicing and case-management workflows such as CLIC, including product areas like Credit Balance Refund and App Controls. His individual case studies and portfolio projects are separate from that employment experience: Saarthi AI is a concept and prototype he developed during product-management learning, and Ask Harshit AI is his own portfolio project demonstrating a retrieval-augmented generation (RAG) assistant. Ask Harshit AI and Saarthi AI should not be described as products launched professionally at American Express.",
       sources: chunk ? [{ title: chunk.title, section: chunk.section }] : [],
     });
@@ -474,7 +489,7 @@ export async function answerAskHarshit(request: Request, env: Env) {
 
   if (isApiBoundaryQuestion) {
     const chunk = askHarshitKnowledge.find((item) => item.id === "ask-harshit-case-study-api-contracts");
-    return json({
+    return responseWithTiming({
       answer: "The /api/ask-harshit endpoint is the server-side boundary between the portfolio frontend and backend. It validates the request, creates an embedding for the question, performs retrieval against the vector index, builds a grounded prompt, and calls the language model to generate the response. It also returns a response the frontend can render and should handle malformed input, embedding or retrieval failures, empty results, and generation errors gracefully.",
       sources: chunk ? [{ title: chunk.title, section: chunk.section }] : [],
     });
@@ -482,7 +497,7 @@ export async function answerAskHarshit(request: Request, env: Env) {
 
   if (isAbstentionPolicyQuestion) {
     const chunk = askHarshitKnowledge.find((item) => item.id === "ask-harshit-ai-grounding");
-    return json({
+    return responseWithTiming({
       answer: "If the portfolio does not contain enough verified information to answer, Ask Harshit AI should acknowledge that it does not know, say there is not enough verified information, and should not guess or fill gaps with assumptions. It should answer only what the available portfolio evidence supports and avoid presenting unsupported details as facts.",
       sources: chunk ? [{ title: chunk.title, section: chunk.section }] : [],
     });
@@ -515,48 +530,50 @@ export async function answerAskHarshit(request: Request, env: Env) {
     /\b(?:automatically|editing|edit|update|sync|synchronize)\b/i.test(question);
 
   if (isBiFteMetricQuestion && !isCbrImpactQuestion) {
-    return json({
+    return responseWithTiming({
       answer: "A verified FTE-savings metric for BI case elimination is not available in the portfolio evidence. The documented outcome is improved case quality and inventory governance by preventing incomplete or invalid submissions from creating unnecessary BI cases; I cannot verify a quantified savings figure.",
       sources: [],
     });
   }
 
   if (isCbrImpactQuestion) {
-    return json({
+    return responseWithTiming({
       answer: "A GS Automation Acceleration launch announcement for UK proactive and reactive Credit Balance Refund (CBR) reported approximately 60% automation, around 350,000 annual cases, and approximately 18 annualized FTE in savings. These are reported outcomes for the broader UK initiative/program, not metrics individually attributable to Harshit. Harshit's supported contribution is in requirements and workflow understanding, validation of expected outcomes and exceptions, and launch readiness; the evidence does not support claiming that he personally delivered those program-wide figures.",
       sources: sourceFor("cbr-business-outcomes"),
     });
   }
 
   if (isExplicitBusinessAttributionQuestion) {
-    return json({
+    return responseWithTiming({
       answer: "No. The approximately 18 annualized FTE savings were reported for the broader UK CBR automation initiative/program. They are not individually attributable to Harshit, so he should not claim that he personally delivered those savings. His supported contribution should be described separately in terms of requirements, workflow understanding, validation, exception scenarios and launch readiness.",
       sources: sourceFor("product-impact-evidence"),
     });
   }
 
   if (isExplicitBenchmarkQuestion) {
-    return json({
+    return responseWithTiming({
       answer: "No verified result shows that Ask Harshit AI has achieved 90% grounded-answer correctness. At least 90% is a proposed target/acceptance criterion for a manually labeled evaluation set, not a measured or achieved outcome. It still needs to be tested and reported.",
       sources: sourceFor("ask-harshit-case-study-evaluation-plan"),
     });
   }
 
   if (isExplicitLatencyQuestion) {
-    return json({
+    return responseWithTiming({
       answer: "A verified end-to-end latency benchmark has not been reported. The current end-to-end latency is therefore not established by the available evidence; request timings from an individual evaluation run are not a stable benchmark. It needs to be measured across representative questions and reported with a consistent methodology.",
       sources: sourceFor("ask-harshit-case-study-evaluation-plan"),
     });
   }
 
   if (isExplicitKnowledgeSyncQuestion) {
-    return json({
+    return responseWithTiming({
       answer: "No. Editing the knowledge source file alone does not automatically update the live Cloudflare Vectorize index. The knowledge-indexing/sync workflow must run and complete successfully before the changed content is available to live retrieval.",
       sources: sourceFor("ask-harshit-case-study-indexing-pipeline"),
     });
   }
 
+  const retrievalStartedAt = performance.now();
   const semanticMatches = await semanticRetrieve(retrievalQuestion, env);
+  stageTimings.retrieval = performance.now() - retrievalStartedAt;
 
   const lexicalMatches = askHarshitKnowledge
     .map((chunk) => ({ chunk, lexicalScore: lexicalScore(retrievalQuestion, chunk) }))
@@ -666,7 +683,7 @@ export async function answerAskHarshit(request: Request, env: Env) {
     );
 
   if (!hasLexicalEvidence && !hasKnownPortfolioTopic && explicitEntities.length === 0) {
-    return json({
+    return responseWithTiming({
       answer:
         "I don’t have enough verified information in Harshit’s portfolio to answer that accurately. I don’t want to guess or pull in unrelated portfolio material.",
       sources: [],
@@ -706,7 +723,7 @@ export async function answerAskHarshit(request: Request, env: Env) {
     : candidates;
 
   if (explicitEntities.length > 0 && entityCandidates.length === 0) {
-    return json({
+    return responseWithTiming({
       answer:
         "I don’t have enough verified information in Harshit’s portfolio to answer that accurately. I don’t want to guess about this part of his experience.",
       sources: [],
@@ -756,7 +773,7 @@ export async function answerAskHarshit(request: Request, env: Env) {
     .slice(0, 4);
 
   if (!retrieved.length) {
-    return json({
+    return responseWithTiming({
       answer:
         "I don’t have enough grounded information in Harshit’s portfolio to answer that accurately.",
       sources: [],
@@ -771,7 +788,7 @@ export async function answerAskHarshit(request: Request, env: Env) {
     .join("\n\n");
 
   if (!env.AI) {
-    return json({
+    return responseWithTiming({
       answer:
         "The retrieval layer is configured, but the AI generation runtime is not connected yet. Relevant portfolio sources: " +
         retrieved.map(({ chunk }) => chunk.title).join(", ") +
@@ -871,6 +888,7 @@ ${question}`;
 
 
   let result: unknown;
+  const generationStartedAt = performance.now();
 
   try {
     result = await env.AI.run("@cf/zai-org/glm-4.7-flash", {
@@ -885,7 +903,8 @@ ${question}`;
       max_completion_tokens: 1200,
     });
   } catch {
-    return json({
+    stageTimings.generation = performance.now() - generationStartedAt;
+    return responseWithTiming({
       answer: "I couldn't generate a grounded answer right now. Please try again.",
       sources: retrieved.map(({ chunk }) => ({
         title: chunk.title,
@@ -894,6 +913,8 @@ ${question}`;
       generationError: true,
     });
   }
+
+  stageTimings.generation = performance.now() - generationStartedAt;
 
   let answer = extractAiText(result);
 
@@ -906,7 +927,7 @@ ${question}`;
     .replace(/\bdeep understanding of the end-to-end process\b/gi, "workflow understanding")
     .replace(/\bensuring launch readiness for deployments\b/gi, "launch readiness");
 
-  return json({
+  return responseWithTiming({
     answer,
     sources: retrieved.map(({ chunk }) => ({
       title: chunk.title,
