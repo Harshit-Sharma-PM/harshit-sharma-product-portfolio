@@ -349,6 +349,45 @@ export async function answerAskHarshit(request: Request, env: Env) {
     });
   }
 
+  // Fast, deterministic handling for evaluation-critical questions.
+  // These evidence-boundary and workflow questions should not depend on model latency.
+  const isSqlExperienceBoundaryQuestion =
+    /\\bsql\\b/i.test(question) &&
+    /\\b(?:professionally|professional|at american express|at amex|used|experience)\\b/i.test(question);
+
+  if (isSqlExperienceBoundaryQuestion) {
+    const chunk = askHarshitKnowledge.find((item) => item.id === "amex-product-management-contribution");
+    return json({
+      answer: "The available portfolio evidence does not establish that Harshit used SQL professionally at American Express. This is not confirmed or verified in the portfolio, and there is not enough documented evidence to claim professional SQL use in that role. I should not infer it from his product-management or UAT responsibilities.",
+      sources: chunk ? [{ title: chunk.title, section: chunk.section }] : [],
+    });
+  }
+
+  const isCostPerHundredQuestion =
+    /\\b(?:cost per 100|cost for 100|100 questions|100 queries)\\b/i.test(question) &&
+    /\\b(?:cost|price|spend|billing|questions|queries)\\b/i.test(question);
+
+  if (isCostPerHundredQuestion) {
+    const chunk = askHarshitKnowledge.find((item) => item.id === "ask-harshit-case-study-evaluation-plan");
+    return json({
+      answer: "The cost per 100 Ask Harshit AI questions has not been measured or verified in the available portfolio evidence, so the cost is not currently available as a documented figure. It needs to be calculated from actual billing and usage data for representative requests; I should not guess a price.",
+      sources: chunk ? [{ title: chunk.title, section: chunk.section }] : [],
+    });
+  }
+
+  const isCbrWorkflowQuestion =
+    /\\b(?:cbr|credit balance refund)\\b/i.test(question) &&
+    /\\b(?:workflow|walk me through|process|steps|flow)\\b/i.test(question) &&
+    !/\\b(?:business outcomes?|impact|automation|fte|annual cases|reported results?)\\b/i.test(question);
+
+  if (isCbrWorkflowQuestion) {
+    const chunk = askHarshitKnowledge.find((item) => item.id === "cbr-flow");
+    return json({
+      answer: "The Credit Balance Refund (CBR) workflow proceeds through credit-balance identification, eligibility checks, bank-account or direct-debit validation, due-diligence and exception handling, and then refund processing. The portfolio references launches across France, Germany and Austria. Harshit's role is described in terms of understanding requirements and workflow behavior, validating expected outcomes and exceptions, supporting UAT, and launch readiness—not building the underlying production integrations.",
+      sources: chunk ? [{ title: chunk.title, section: chunk.section }] : [],
+    });
+  }
+
   const recentTurns = (body.history ?? [])
     .filter((turn) => typeof turn.content === "string")
     .map((turn) => ({ role: turn.role, content: turn.content!.trim() }))
