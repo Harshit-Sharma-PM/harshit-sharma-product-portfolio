@@ -1171,3 +1171,115 @@ footer .btn:hover {
 .ask-ai-floating span {
   display: none;
 }
+
+
+/* Distinct case-study artwork: Saarthi keeps the human-centred orbital motif;
+   Ask Harshit AI uses a compact RAG pipeline instead of a duplicated orbit. */
+.case-card-art.saarthi-art .case-art-orbit { display: block; }
+.case-card-art.ask-harshit-art {
+  overflow: hidden;
+  background:
+    linear-gradient(rgba(122, 196, 174, .055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(122, 196, 174, .055) 1px, transparent 1px),
+    #101b18;
+  background-size: 22px 22px;
+}
+.ask-harshit-art::before { opacity: .025 !important; }
+.ask-harshit-art .case-art-number { color: #9ed7c6; }
+.rag-art {
+  position: absolute;
+  inset: 19% 12% 10%;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: center;
+  gap: 9px;
+  color: #eef4ef;
+  font-family: var(--app-font-mono);
+}
+.rag-art-query {
+  align-self: flex-start;
+  width: 78%;
+  padding: 10px 12px;
+  border: 1px solid #45675b;
+  background: #1c3029;
+  box-shadow: 4px 4px 0 rgba(5, 12, 10, .24);
+}
+.rag-art-query span,
+.rag-art-answer span {
+  display: block;
+  margin-bottom: 5px;
+  color: #9bcfbd;
+  font-size: 8px;
+  letter-spacing: .12em;
+}
+.rag-art-query b { font-family: var(--app-font-sans); font-size: clamp(10px, 1.2vw, 14px); font-weight: 600; }
+.rag-art-connector {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 12px;
+}
+.rag-art-connector i {
+  width: 28%;
+  height: 1px;
+  background: #7bc7b0;
+  position: relative;
+}
+.rag-art-connector i::after {
+  content: "";
+  position: absolute;
+  right: -1px;
+  top: -3px;
+  width: 5px;
+  height: 5px;
+  border-top: 1px solid #7bc7b0;
+  border-right: 1px solid #7bc7b0;
+  transform: rotate(45deg);
+}
+.rag-art-retrieval {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  align-self: center;
+  width: 88%;
+  padding: 11px 12px;
+  border: 1px solid #557b6c;
+  background: #243c33;
+}
+.rag-art-spark { color: #e6ad67; font-size: 22px; }
+.rag-art-retrieval b { display: block; font-family: var(--app-font-sans); font-size: clamp(10px, 1.15vw, 13px); }
+.rag-art-retrieval small { display: block; margin-top: 4px; color: #b5cec2; font-size: 8px; }
+.rag-art-answer {
+  align-self: flex-end;
+  width: 78%;
+  padding: 10px 12px;
+  background: #d6e9df;
+  color: #172923;
+}
+.rag-art-answer span { color: #2c7260; }
+.rag-art-answer i {
+  display: block;
+  width: 100%;
+  height: 3px;
+  margin-top: 5px;
+  background: #a8c9b9;
+}
+.rag-art-answer i:nth-of-type(2) { width: 82%; }
+.rag-art-answer i:nth-of-type(3) { width: 59%; }
+.rag-art-label {
+  align-self: center;
+  margin-top: 3px;
+  color: #9bcfbd;
+  font-size: 8px;
+  letter-spacing: .12em;
+  text-align: center;
+}
+:root[data-theme="dark"] .case-card-art.ask-harshit-art { background-color: #0b1211; }
+@media (max-width: 650px) {
+  .rag-art { inset: 18% 10% 8%; gap: 7px; }
+  .rag-art-query, .rag-art-answer { padding: 8px 10px; }
+  .rag-art-retrieval { padding: 8px 10px; }
+  .rag-art-label { font-size: 7px; }
+}
