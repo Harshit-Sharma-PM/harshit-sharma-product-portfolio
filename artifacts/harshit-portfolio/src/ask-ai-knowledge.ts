@@ -283,11 +283,10 @@ export const askHarshitKnowledge: KnowledgeChunk[] = [
   },
   {
     id: "ask-harshit-case-study-iteration-learning",
-    title: "Ask Harshit AI case study — implementation failures and iteration",
+    title: "Ask Harshit AI case study — retrieval and intent iteration",
     section: "Ask Harshit AI · Iteration",
     text:
-      "During Ask Harshit AI development, a Vectorize upsert format mismatch produced Cloudflare error 40023; the ingestion workflow was adapted to use newline-delimited JSON, with checks for embedding dimensions and per-stage logging. Another issue was retrieval relevance: a question such as 'Who built you?' could retrieve related content about Saarthi AI instead of the assistant's authorship. This illustrated that semantic similarity is not equivalent to intent correctness. The design direction included explicit handling for authorship and identity questions and consideration of lexical matching alongside semantic search. Questions such as 'Who am I?' also exposed ambiguity between the visitor and the portfolio owner. Describe these as observed failure modes and iteration directions; do not claim that a fix is fully validated without a test result.",
-  },
+      "A retrieval-quality issue occurred when a question about who built the assistant could retrieve related material about Saarthi AI instead of the assistant's authorship. This showed that semantic similarity is not the same as intent correctness. The implementation includes a dedicated authorship-intent rule and combines semantic retrieval with lexical evidence and topic boundaries. Visitor identity is handled separately: the assistant should not infer who a visitor is personally. These code paths still require regression testing; do not claim a measured accuracy improvement without evaluation results.",
   {
     id: "ask-harshit-case-study-api-contracts",
     title: "Ask Harshit AI case study — API contracts and failure boundaries",
