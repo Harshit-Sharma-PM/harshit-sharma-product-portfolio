@@ -724,5 +724,39 @@
       "Saarthi AI built Ask Harshit AI"
     ],
     "manualReview": true
+  },
+  {
+    "id": "clic-contribution-product-execution",
+    "category": "professional-product",
+    "question": "What is my contribution in CLIC?",
+    "expectedSourceTitle": "CLIC — Harshit’s involvement",
+    "mustContainAny": [
+      [
+        "product execution",
+        "product delivery",
+        "product-driven"
+      ],
+      [
+        "requirements clarification",
+        "requirements",
+        "operational needs"
+      ],
+      [
+        "workflow analysis",
+        "workflow"
+      ],
+      [
+        "BI case elimination"
+      ],
+      [
+        "inventory governance",
+        "case quality"
+      ]
+    ],
+    "mustNotContain": [
+      "Harshit owns the entire CLIC platform",
+      "built the CLIC platform"
+    ],
+    "manualReview": true
   }
 ]
