@@ -429,6 +429,26 @@ export async function answerAskHarshit(request: Request, env: Env) {
     });
   }
 
+  // Answer CLIC contribution questions from a product-delivery perspective,
+  // not as a list of testing tasks or a claim of owning the entire platform.
+  const isClicContributionQuestion =
+    /\bclic\b/i.test(question) &&
+    /\b(?:contribution|contribute|involvement|role|experience|work|responsibilit(?:y|ies))\b/i.test(question);
+
+  if (isClicContributionQuestion) {
+    const chunks = [
+      askHarshitKnowledge.find((item) => item.id === "clic-involvement"),
+      askHarshitKnowledge.find((item) => item.id === "amex-responsibilities"),
+      askHarshitKnowledge.find((item) => item.id === "clic-bi-case-elimination"),
+      askHarshitKnowledge.find((item) => item.id === "clic-observability-validation"),
+    ].filter((item): item is KnowledgeChunk => Boolean(item));
+
+    return responseWithTiming({
+      answer: "Harshit’s contribution to CLIC combines product execution with hands-on workflow validation. He works across requirements clarification and workflow analysis, translating operational needs into testable outcomes, coordinating validation in staging, checking happy paths and exceptions, triaging defects with supporting evidence such as case outcomes and ELF logs, and helping establish release readiness. A concrete example is BI case elimination: validating the workflow behavior intended to prevent incomplete or invalid submissions from creating unnecessary cases, improving case quality and inventory governance. This reflects contribution across the product delivery lifecycle—not just test execution, and not ownership of the entire CLIC platform.",
+      sources: chunks.map((chunk) => ({ title: chunk.title, section: chunk.section })),
+    });
+  }
+
   const recentTurns = (body.history ?? [])
     .filter((turn) => typeof turn.content === "string")
     .map((turn) => ({ role: turn.role, content: turn.content!.trim() }))
