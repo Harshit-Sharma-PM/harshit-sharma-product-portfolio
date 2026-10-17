@@ -393,6 +393,74 @@ export async function answerAskHarshit(request: Request, env: Env) {
     }
   }
 
+  // Deterministic answers for evidence-sensitive metric questions. These facts and
+  // caveats must not depend on probabilistic generation or semantically similar chunks.
+  const findKnowledgeSource = (id: string) => askHarshitKnowledge.find((chunk) => chunk.id === id);
+  const sourceFor = (id: string) => {
+    const chunk = findKnowledgeSource(id);
+    return chunk ? [{ title: chunk.title, section: chunk.section }] : [];
+  };
+
+  const isCbrImpactQuestion =
+    /\b(?:cbr|credit balance refund)\b/i.test(question) &&
+    /\b(?:business outcomes?|impact|automation|fte|annual cases|reported results?)\b/i.test(question);
+  const isBiFteMetricQuestion =
+    /\bbi\b/i.test(question) &&
+    /\b(?:fte|savings?|saved|saving|impact|metrics?)\b/i.test(question);
+  const isExplicitBusinessAttributionQuestion =
+    /\b(?:18\s*fte|fte savings?|savings?)\b/i.test(question) &&
+    /\b(?:personally|individual|claim|attribution|attribute|delivered)\b/i.test(question);
+  const isExplicitBenchmarkQuestion =
+    /\b90\s*%\b/i.test(question) &&
+    /\b(?:achieved|measured|correctness|accuracy|target|benchmark)\b/i.test(question);
+  const isExplicitLatencyQuestion =
+    /\b(?:end.to.end latency|current latency|latency|response time)\b/i.test(question);
+  const isExplicitKnowledgeSyncQuestion =
+    /\b(?:knowledge file|source file|vectorize|live index)\b/i.test(question) &&
+    /\b(?:automatically|editing|edit|update|sync|synchronize)\b/i.test(question);
+
+  if (isBiFteMetricQuestion && !isCbrImpactQuestion) {
+    return json({
+      answer: "A verified FTE-savings metric for BI case elimination is not available in the portfolio evidence. The documented outcome is improved case quality and inventory governance by preventing incomplete or invalid submissions from creating unnecessary BI cases; I cannot verify a quantified savings figure.",
+      sources: [],
+    });
+  }
+
+  if (isCbrImpactQuestion) {
+    return json({
+      answer: "A GS Automation Acceleration launch announcement for UK proactive and reactive Credit Balance Refund (CBR) reported approximately 60% automation, around 350,000 annual cases, and approximately 18 annualized FTE in savings. These are reported outcomes for the broader UK initiative/program, not metrics individually attributable to Harshit. Harshit's supported contribution is in requirements and workflow understanding, validation of expected outcomes and exceptions, and launch readiness; the evidence does not support claiming that he personally delivered those program-wide figures.",
+      sources: sourceFor("cbr-business-outcomes"),
+    });
+  }
+
+  if (isExplicitBusinessAttributionQuestion) {
+    return json({
+      answer: "No. The approximately 18 annualized FTE savings were reported for the broader UK CBR automation initiative/program. They are not individually attributable to Harshit, so he should not claim that he personally delivered those savings. His supported contribution should be described separately in terms of requirements, workflow understanding, validation, exception scenarios and launch readiness.",
+      sources: sourceFor("product-impact-evidence"),
+    });
+  }
+
+  if (isExplicitBenchmarkQuestion) {
+    return json({
+      answer: "No verified result shows that Ask Harshit AI has achieved 90% grounded-answer correctness. At least 90% is a proposed target/acceptance criterion for a manually labeled evaluation set, not a measured or achieved outcome. It still needs to be tested and reported.",
+      sources: sourceFor("ask-harshit-case-study-evaluation-plan"),
+    });
+  }
+
+  if (isExplicitLatencyQuestion) {
+    return json({
+      answer: "A verified end-to-end latency benchmark has not been reported. The current end-to-end latency is therefore not established by the available evidence; request timings from an individual evaluation run are not a stable benchmark. It needs to be measured across representative questions and reported with a consistent methodology.",
+      sources: sourceFor("ask-harshit-case-study-evaluation-plan"),
+    });
+  }
+
+  if (isExplicitKnowledgeSyncQuestion) {
+    return json({
+      answer: "No. Editing the knowledge source file alone does not automatically update the live Cloudflare Vectorize index. The knowledge-indexing/sync workflow must run and complete successfully before the changed content is available to live retrieval.",
+      sources: sourceFor("ask-harshit-case-study-indexing-pipeline"),
+    });
+  }
+
   const semanticMatches = await semanticRetrieve(retrievalQuestion, env);
 
   const lexicalMatches = askHarshitKnowledge
