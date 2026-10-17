@@ -21,11 +21,21 @@ function checkCase(test, answer, sources) {
   const expectedSourceMissing =
     test.expectedSourceTitle &&
     !sourceText.includes(lower(test.expectedSourceTitle));
+  const forbiddenSourceTitles = (test.mustNotReturnSourceTitles ?? [])
+    .filter((title) => sourceText.includes(lower(title)));
+  const unexpectedSources = Boolean(test.mustNotReturnAnySources && (sources ?? []).length > 0);
   return {
-    pass: missingGroups.length === 0 && forbidden.length === 0 && !expectedSourceMissing,
+    pass:
+      missingGroups.length === 0 &&
+      forbidden.length === 0 &&
+      !expectedSourceMissing &&
+      forbiddenSourceTitles.length === 0 &&
+      !unexpectedSources,
     missingGroups,
     forbidden,
     expectedSourceMissing: Boolean(expectedSourceMissing),
+    forbiddenSourceTitles,
+    unexpectedSources,
   };
 }
 
@@ -78,6 +88,8 @@ for (let index = 0; index < cases.length; index += 1) {
     missingGroups: checks.missingGroups,
     forbidden: checks.forbidden,
     expectedSourceMissing: checks.expectedSourceMissing,
+    forbiddenSourceTitles: checks.forbiddenSourceTitles ?? [],
+    unexpectedSources: checks.unexpectedSources ?? false,
     manualReview: Boolean(test.manualReview),
     answer,
     sources: sources.map((source) => source.title),
@@ -91,6 +103,8 @@ for (let index = 0; index < cases.length; index += 1) {
   if (checks.missingGroups.length) console.log(`  Missing expected terms: ${checks.missingGroups.join("; ")}`);
   if (checks.forbidden.length) console.log(`  Forbidden terms: ${checks.forbidden.join(", ")}`);
   if (checks.expectedSourceMissing) console.log(`  Expected source title not returned: ${test.expectedSourceTitle}`);
+  if (checks.forbiddenSourceTitles?.length) console.log(`  Unexpected source titles: ${checks.forbiddenSourceTitles.join(", ")}`);
+  if (checks.unexpectedSources) console.log("  Unexpected sources returned for an abstention case.");
   console.log(`  Sources: ${result.sources.join(" | ") || "(none)"}`);
 
   if (index < cases.length - 1) await sleep(delayMs);
