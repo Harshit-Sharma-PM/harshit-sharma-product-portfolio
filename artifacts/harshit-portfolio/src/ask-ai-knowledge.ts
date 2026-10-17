@@ -253,4 +253,60 @@ export const askHarshitKnowledge: KnowledgeChunk[] = [
       "Keep professional American Express product/UAT experience separate from individual portfolio case studies. CLIC, Credit Balance Refund, App Controls, Dispute Payment Management and BI case elimination are professional-work contexts. Ask Harshit AI is an individual portfolio assistant build. Saarthi AI is an individual 0-to-1 concept and prototype supported by product strategy, PRD, MVP definition, user journeys and proposed AI architecture; it is not a claimed production launch. Do not present prototype assumptions or proposed architecture as measured production outcomes.",
   },
 
+{
+    id: "ask-harshit-case-study-user-problem",
+    title: "Ask Harshit AI case study — user problem and job to be done",
+    section: "Ask Harshit AI · Product strategy",
+    text:
+      "Ask Harshit AI addresses information-discovery friction in a static product portfolio. Recruiters, hiring managers and product leaders may want specific details about Harshit's experience, product decisions, technical understanding or case studies without manually scanning every page. The product hypothesis is that a portfolio-specific conversational assistant grounded in curated evidence can make relevant information easier to discover. The core job to be done is: when evaluating a candidate, help me quickly find specific, relevant evidence about their experience and projects so I can make a better-informed assessment. This is a hypothesis to validate, not a proven increase in recruiter conversion or hiring outcomes.",
+  },
+  {
+    id: "ask-harshit-case-study-online-architecture",
+    title: "Ask Harshit AI case study — online RAG architecture",
+    section: "Ask Harshit AI · Architecture",
+    text:
+      "The documented online Ask Harshit AI flow is: visitor submits a question in the React and Vite interface; the frontend calls the server-side POST /api/ask-harshit endpoint; the backend validates and embeds the question using BGE-small; Cloudflare Vectorize retrieves semantically relevant knowledge chunks; the backend assembles the question and retrieved evidence into a prompt; the configured language model generates a natural-language response; the API returns a response for the interface to render. Vectorize performs retrieval, not answer generation. The language model generates the response, and its factual reliability depends in part on the evidence retrieved and the instructions provided.",
+  },
+  {
+    id: "ask-harshit-case-study-indexing-pipeline",
+    title: "Ask Harshit AI case study — offline knowledge indexing",
+    section: "Ask Harshit AI · Data pipeline",
+    text:
+      "The offline indexing workflow imports curated KnowledgeChunk records from the version-controlled ask-ai-knowledge.ts file. For each chunk, the sync script embeds the chunk title, section and text with Cloudflare Workers AI BGE-small, validates that the vector has 384 dimensions, attaches the title, section and text as metadata, and upserts the vectors into the Cloudflare Vectorize index named ask-harshit-ai using newline-delimited JSON. A GitHub Actions workflow is configured to run the sync on changes to the knowledge source when those changes reach a configured trigger branch, and can also be manually dispatched. Editing the TypeScript knowledge file alone does not update the live index; the sync job must complete successfully. Never claim an upsert succeeded without checking the workflow result.",
+  },
+  {
+    id: "ask-harshit-case-study-architecture-tradeoffs",
+    title: "Ask Harshit AI case study — architecture decisions and trade-offs",
+    section: "Ask Harshit AI · Technical product decisions",
+    text:
+      "Ask Harshit AI uses RAG rather than fine-tuning because portfolio facts change and should be updated independently of model parameters. BGE-small provides compact 384-dimensional text embeddings; Cloudflare Vectorize stores and searches the embeddings; a server-side Pages Function coordinates request validation, retrieval and generation; GitHub Actions makes indexing repeatable. These choices aim to keep the implementation lightweight and cost-conscious. Trade-offs remain: semantic similarity can retrieve the wrong fact, a stale index can disagree with the source file, model responses can still hallucinate, serverless execution has platform limits, and each integration introduces a potential failure point. These are architectural trade-offs, not proof that every failure mode has been eliminated.",
+  },
+  {
+    id: "ask-harshit-case-study-iteration-learning",
+    title: "Ask Harshit AI case study — implementation failures and iteration",
+    section: "Ask Harshit AI · Iteration",
+    text:
+      "During Ask Harshit AI development, a Vectorize upsert format mismatch produced Cloudflare error 40023; the ingestion workflow was adapted to use newline-delimited JSON, with checks for embedding dimensions and per-stage logging. Another issue was retrieval relevance: a question such as 'Who built you?' could retrieve related content about Saarthi AI instead of the assistant's authorship. This illustrated that semantic similarity is not equivalent to intent correctness. The design direction included explicit handling for authorship and identity questions and consideration of lexical matching alongside semantic search. Questions such as 'Who am I?' also exposed ambiguity between the visitor and the portfolio owner. Describe these as observed failure modes and iteration directions; do not claim that a fix is fully validated without a test result.",
+  },
+  {
+    id: "ask-harshit-case-study-api-contracts",
+    title: "Ask Harshit AI case study — API contracts and failure boundaries",
+    section: "Ask Harshit AI · API integration",
+    text:
+      "The frontend and backend are separated by a server-side POST /api/ask-harshit endpoint. The backend is responsible for request validation and orchestration across embedding, vector retrieval, prompt construction and language-model generation. Important contracts include valid request shape, acceptable question length, the 384-dimensional embedding expected by the vector index, metadata containing retrievable text, and a response shape the frontend can render. Potential failures include malformed input, embedding failure, vector search failure, empty or irrelevant retrieval, generation timeout and malformed output. Good product behavior requires graceful errors and diagnosable stages rather than treating the workflow as one opaque AI call. Example request and response payloads in the case study are illustrative unless explicitly captured from the live endpoint.",
+  },
+  {
+    id: "ask-harshit-case-study-evaluation-plan",
+    title: "Ask Harshit AI case study — evaluation and success metrics",
+    section: "Ask Harshit AI · Measurement",
+    text:
+      "Ask Harshit AI has a proposed evaluation plan, not a verified published benchmark. Create a manually labeled set of approximately 30–50 questions covering professional facts, project details, ambiguous identity questions, multi-topic queries and facts intentionally absent from the knowledge base. Evaluate retrieval relevance, grounded answer correctness, abstention quality, intent-routing accuracy, end-to-end latency, API failure rate and cost per 100 questions. A proposed target of at least 90% grounded answer correctness is an acceptance criterion to test, not an achieved result. Track critical unsupported claims separately. Infrastructure vector-query counts or query latency are not substitutes for answer accuracy or end-to-end user-perceived latency.",
+  },
+  {
+    id: "ask-harshit-case-study-product-contribution",
+    title: "Ask Harshit AI case study — product management contribution",
+    section: "Ask Harshit AI · Product leadership",
+    text:
+      "The product-management contribution in Ask Harshit AI is to define the user problem and intended audience, formulate the product hypothesis, translate it into prioritized requirements, choose a lightweight architecture that fits the use case and cost constraints, understand service boundaries and data contracts, investigate retrieval and ingestion failures, and define an evidence-based evaluation plan. The story should emphasize decisions and reasoning: why grounded portfolio retrieval matters, why knowledge updates should be separate from model training, why retrieval and generation must be evaluated independently, and why targets must be separated from achieved outcomes. It is an individual portfolio build and learning project, not an enterprise production deployment or a claim of training a foundation model from scratch.",
+  },
 ];
