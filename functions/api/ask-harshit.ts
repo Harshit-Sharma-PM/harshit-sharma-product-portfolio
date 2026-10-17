@@ -522,10 +522,12 @@ export async function answerAskHarshit(request: Request, env: Env) {
     ? entityCandidates.filter(({ chunk }) => chunk.id === "ask-harshit-case-study-iteration-learning")
     : isBiCaseEliminationQuestion
       ? entityCandidates.filter(({ chunk }) => chunk.id === "clic-bi-case-elimination")
-      : entityCandidates;
+      : isBusinessImpactAttributionQuestion
+        ? entityCandidates.filter(({ chunk }) => chunk.id === "product-impact-evidence")
+        : entityCandidates;
 
   const rankedCandidates =
-    isRetrievalIntentDiscussion || isBiCaseEliminationQuestion
+    isRetrievalIntentDiscussion || isBiCaseEliminationQuestion || isBusinessImpactAttributionQuestion
       ? topicScopedCandidates
       : entityCandidates.length
         ? entityCandidates
