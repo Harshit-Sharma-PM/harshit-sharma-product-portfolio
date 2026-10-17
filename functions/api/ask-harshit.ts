@@ -411,7 +411,7 @@ export async function answerAskHarshit(request: Request, env: Env) {
     /\b(?:18\s*fte|fte savings?|savings?)\b/i.test(question) &&
     /\b(?:personally|individual|claim|attribution|attribute|delivered)\b/i.test(question);
   const isExplicitBenchmarkQuestion =
-    /\b90\\s*%/i.test(question) &&
+    /\b90\s*%/i.test(question) &&
     /\b(?:achieved|measured|correctness|accuracy|target|benchmark)\b/i.test(question);
   const isExplicitLatencyQuestion =
     /\b(?:end.to.end latency|current latency|latency|response time)\b/i.test(question);
