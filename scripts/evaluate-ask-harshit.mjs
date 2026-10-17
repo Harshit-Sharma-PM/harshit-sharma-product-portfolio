@@ -17,7 +17,12 @@ function checkCase(test, answer, sources) {
   const missingGroups = (test.mustContainAny ?? [])
     .filter((alternatives) => !alternatives.some((term) => text.includes(lower(term))))
     .map((alternatives) => alternatives.join(" OR "));
-  const forbidden = (test.mustNotContain ?? []).filter((term) => text.includes(lower(term)));
+  // Use whole-word matching so a forbidden token like "Gene" does not
+  // accidentally match harmless words such as "generally" or "generation".
+  const forbidden = (test.mustNotContain ?? []).filter((term) => {
+    const escaped = lower(term).replace(/[.*+?^${}()|[\]\\]/g, "\\  const forbidden = (test.mustNotContain ?? []).filter((term) => text.includes(lower(term)));");
+    return new RegExp(`\\b${escaped}\\b`, "i").test(text);
+  });
   const expectedSourceMissing =
     test.expectedSourceTitle &&
     !sourceText.includes(lower(test.expectedSourceTitle));
@@ -105,6 +110,10 @@ for (let index = 0; index < cases.length; index += 1) {
   if (checks.expectedSourceMissing) console.log(`  Expected source title not returned: ${test.expectedSourceTitle}`);
   if (checks.forbiddenSourceTitles?.length) console.log(`  Unexpected source titles: ${checks.forbiddenSourceTitles.join(", ")}`);
   if (checks.unexpectedSources) console.log("  Unexpected sources returned for an abstention case.");
+  if (!result.pass && answer) {
+    const compactAnswer = answer.replace(/\\s+/g, " ").trim();
+    console.log(`  Answer excerpt: ${compactAnswer.slice(0, 420)}${compactAnswer.length > 420 ? "…" : ""}`);
+  }
   console.log(`  Sources: ${result.sources.join(" | ") || "(none)"}`);
 
   if (index < cases.length - 1) await sleep(delayMs);
