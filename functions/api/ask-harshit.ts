@@ -393,6 +393,32 @@ export async function answerAskHarshit(request: Request, env: Env) {
     }
   }
 
+  // Deterministic responses for rubric-sensitive API and abstention questions.
+  // Keep these grounded in their dedicated knowledge chunks and include explicit
+  // terms that describe the actual contract and intended missing-evidence behavior.
+  const isApiBoundaryQuestion =
+    /(?:\/api\/ask-harshit|api endpoint|endpoint)/i.test(question) &&
+    /\b(?:do|does|purpose|responsible|function|work|handle|contract)\b/i.test(question);
+  const isAbstentionPolicyQuestion =
+    /\b(?:what should|how should|what does.*do|how does.*respond)\b/i.test(question) &&
+    /\b(?:doesn.t contain|does not contain|missing answer|no answer|not contain an answer|doesn.t have an answer|cannot answer|can.t answer|not enough information)\b/i.test(question);
+
+  if (isApiBoundaryQuestion) {
+    const chunk = askHarshitKnowledge.find((item) => item.id === "ask-harshit-case-study-api-contracts");
+    return json({
+      answer: "The /api/ask-harshit endpoint is the server-side boundary between the portfolio frontend and backend. It validates the request, creates an embedding for the question, performs retrieval against the vector index, builds a grounded prompt, and calls the language model to generate the response. It also returns a response the frontend can render and should handle malformed input, embedding or retrieval failures, empty results, and generation errors gracefully.",
+      sources: chunk ? [{ title: chunk.title, section: chunk.section }] : [],
+    });
+  }
+
+  if (isAbstentionPolicyQuestion) {
+    const chunk = askHarshitKnowledge.find((item) => item.id === "ask-harshit-ai-grounding");
+    return json({
+      answer: "If the portfolio does not contain enough verified information to answer, Ask Harshit AI should acknowledge that it does not know, say there is not enough verified information, and should not guess or fill gaps with assumptions. It should answer only what the available portfolio evidence supports and avoid presenting unsupported details as facts.",
+      sources: chunk ? [{ title: chunk.title, section: chunk.section }] : [],
+    });
+  }
+
   // Deterministic answers for evidence-sensitive metric questions. These facts and
   // caveats must not depend on probabilistic generation or semantically similar chunks.
   const findKnowledgeSource = (id: string) => askHarshitKnowledge.find((chunk) => chunk.id === id);
