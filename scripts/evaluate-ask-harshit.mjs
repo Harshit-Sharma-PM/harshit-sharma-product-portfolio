@@ -13,7 +13,7 @@ const lower = (value) => String(value ?? "").toLowerCase();
 
 function parseServerTiming(header) {
   const timings = {};
-  for (const match of String(header ?? "").matchAll(/([a-zA-Z0-9_-]+);dur=([\\d.]+)/g)) {
+  for (const match of String(header ?? "").matchAll(/([a-zA-Z0-9_-]+);dur=([\d.]+)/g)) {
     timings[match[1]] = Number(match[2]);
   }
   return timings;
