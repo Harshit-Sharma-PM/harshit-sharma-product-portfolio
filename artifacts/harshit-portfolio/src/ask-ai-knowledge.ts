@@ -287,6 +287,7 @@ export const askHarshitKnowledge: KnowledgeChunk[] = [
     section: "Ask Harshit AI · Iteration",
     text:
       "A retrieval-quality issue occurred when a question about who built the assistant could retrieve related material about Saarthi AI instead of the assistant's authorship. This showed that semantic similarity is not the same as intent correctness. The implementation includes a dedicated authorship-intent rule and combines semantic retrieval with lexical evidence and topic boundaries. Visitor identity is handled separately: the assistant should not infer who a visitor is personally. These code paths still require regression testing; do not claim a measured accuracy improvement without evaluation results.",
+  },
   {
     id: "ask-harshit-case-study-api-contracts",
     title: "Ask Harshit AI case study — API contracts and failure boundaries",
