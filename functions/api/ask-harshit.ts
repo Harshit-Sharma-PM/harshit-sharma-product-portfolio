@@ -365,6 +365,9 @@ export async function answerAskHarshit(request: Request, env: Env) {
 
   // Fast, deterministic handling for evaluation-critical questions.
   // These evidence-boundary and workflow questions should not depend on model latency.
+  const isSqlExperienceBoundaryQuestion =
+    /\bsql\b/i.test(question) &&
+    /\b(?:professionally|professional|at american express|at amex|used|experience)\b/i.test(question);
 
   if (isSqlExperienceBoundaryQuestion) {
     const chunk = askHarshitKnowledge.find((item) => item.id === "amex-product-management-contribution");
@@ -597,9 +600,6 @@ export async function answerAskHarshit(request: Request, env: Env) {
     /\b(?:achieved|accuracy|correctness|benchmark|measured|target)\b/i.test(question);
   const isLatencyMeasurementQuestion =
     /\b(?:end.to.end latency|latency|response time)\b/i.test(question);
-  const isSqlExperienceBoundaryQuestion =
-    /\bsql\b/i.test(question) &&
-    /\b(?:professionally|professional|at american express|at amex|used|experience)\b/i.test(question);
   const isRagTradeoffQuestion =
     /\b(?:rag|retrieval.augmented generation)\b/i.test(question) &&
     /\b(?:fine.tuning|fine.tune|why use|instead of|trade.off)\b/i.test(question);
