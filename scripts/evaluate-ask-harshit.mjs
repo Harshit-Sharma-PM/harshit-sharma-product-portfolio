@@ -20,7 +20,7 @@ function checkCase(test, answer, sources) {
   // Use whole-word matching so a forbidden token like "Gene" does not
   // accidentally match harmless words such as "generally" or "generation".
   const forbidden = (test.mustNotContain ?? []).filter((term) => {
-    const escaped = lower(term).replace(/[.*+?^${}()|[\]\\]/g, "\\  const forbidden = (test.mustNotContain ?? []).filter((term) => text.includes(lower(term)));");
+    const escaped = lower(term).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
     return new RegExp(`\\b${escaped}\\b`, "i").test(text);
   });
   const expectedSourceMissing =
