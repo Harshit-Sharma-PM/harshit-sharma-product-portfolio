@@ -1,0 +1,272 @@
+[
+  {
+    "id": "cbr-impact-and-attribution",
+    "category": "business-impact",
+    "question": "What business outcomes were reported for CBR automation, and what was Harshit's individual contribution?",
+    "expectedSourceTitle": "reported automation business outcomes",
+    "mustContainAny": [["60%"], ["350", "350,000", "350k"], ["18"], ["UK"]],
+    "mustNotContain": ["Harshit personally saved 18 FTE", "Harshit delivered 60% automation"],
+    "manualReview": true
+  },
+  {
+    "id": "cbr-workflow",
+    "category": "professional-product",
+    "question": "Walk me through the Credit Balance Refund workflow.",
+    "expectedSourceTitle": "Credit Balance Refund",
+    "mustContainAny": [["eligibility"], ["bank", "direct-debit"], ["exception"], ["refund"]],
+    "mustNotContain": ["Claim Balance Recovery"],
+    "manualReview": true
+  },
+  {
+    "id": "cbr-contribution",
+    "category": "professional-product",
+    "question": "What was Harshit's contribution to CBR?",
+    "expectedSourceTitle": "Credit Balance Refund",
+    "mustContainAny": [["requirements"], ["validation", "validating"], ["exception"], ["launch readiness"]],
+    "mustNotContain": ["owned the entire", "built the APIs"],
+    "manualReview": true
+  },
+  {
+    "id": "bi-case-elimination",
+    "category": "professional-product",
+    "question": "What problem did BI case elimination solve in CLIC?",
+    "expectedSourceTitle": "BI case elimination",
+    "mustContainAny": [["incomplete", "draft"], ["inventory"], ["workflow", "rules"]],
+    "mustNotContain": ["saved 18 FTE", "60% automation"],
+    "manualReview": true
+  },
+  {
+    "id": "ask-ai-architecture",
+    "category": "architecture",
+    "question": "Explain Ask Harshit AI's architecture from the user's question to the final answer.",
+    "expectedSourceTitle": "online RAG architecture",
+    "mustContainAny": [["React", "Vite"], ["BGE-small"], ["Vectorize"], ["GLM-4.7-Flash", "language model"]],
+    "mustNotContain": ["trained a foundation model from scratch"],
+    "manualReview": true
+  },
+  {
+    "id": "vectorize-ingestion-error",
+    "category": "technical-iteration",
+    "question": "What technical issue happened during Vectorize ingestion, and how was it addressed?",
+    "expectedSourceTitle": "ingestion incident",
+    "mustContainAny": [["40023"], ["NDJSON", "newline-delimited JSON"]],
+    "mustNotContain": ["Saarthi AI was the cause"],
+    "manualReview": true
+  },
+  {
+    "id": "retrieval-intent-issue",
+    "category": "technical-iteration",
+    "question": "What did the 'Who built you?' retrieval problem teach you?",
+    "expectedSourceTitle": "retrieval and intent",
+    "mustContainAny": [["intent"], ["semantic", "similarity"], ["authorship"]],
+    "mustNotContain": ["NDJSON fixed the retrieval issue"],
+    "manualReview": true
+  },
+  {
+    "id": "roadmap-limitations",
+    "category": "roadmap",
+    "question": "What are Ask Harshit AI's current limitations and next steps?",
+    "expectedSourceTitle": "roadmap",
+    "mustContainAny": [["evaluation", "benchmark"], ["latency"], ["abstention", "unsupported"], ["proposed", "target"]],
+    "mustNotContain": ["Gene is implemented", "context programming is implemented"],
+    "manualReview": true
+  },
+  {
+    "id": "benchmark-status",
+    "category": "roadmap",
+    "question": "Has Ask Harshit AI achieved 90% grounded-answer correctness?",
+    "expectedSourceTitle": "evaluation",
+    "mustContainAny": [["proposed", "target"], ["not measured", "not yet", "not achieved", "not a measured"]],
+    "mustNotContain": ["has achieved 90%", "measured 90% accuracy"],
+    "manualReview": true
+  },
+  {
+    "id": "saarthi-status",
+    "category": "case-study",
+    "question": "Was Saarthi AI launched as a production product?",
+    "expectedSourceTitle": "Saarthi AI",
+    "mustContainAny": [["prototype", "concept"], ["not", "rather than"]],
+    "mustNotContain": ["launched to production", "production launch"],
+    "manualReview": true
+  },
+  {
+    "id": "portfolio-role",
+    "category": "profile",
+    "question": "What kind of Product Manager is Harshit?",
+    "expectedSourceTitle": "Product Manager profile",
+    "mustContainAny": [["operational", "workflow"], ["financial services", "customer servicing", "case management"]],
+    "mustNotContain": ["machine learning engineer"],
+    "manualReview": true
+  },
+  {
+    "id": "clic-purpose",
+    "category": "professional-product",
+    "question": "What is CLIC and who uses it?",
+    "expectedSourceTitle": "CLIC",
+    "mustContainAny": [["case-management", "case management"], ["front-line", "front line"], ["servicing"]],
+    "mustNotContain": ["CLIC stands for"],
+    "manualReview": true
+  },
+  {
+    "id": "app-controls",
+    "category": "professional-product",
+    "question": "What product areas has Harshit worked on at American Express?",
+    "expectedSourceTitle": "product areas",
+    "mustContainAny": [["App Controls"], ["CBR", "Credit Balance Refund"], ["DPM", "Dispute Payment Management"]],
+    "mustNotContain": ["FCL"],
+    "manualReview": true
+  },
+  {
+    "id": "education",
+    "category": "profile",
+    "question": "What is Harshit's education background?",
+    "expectedSourceTitle": "Education",
+    "mustContainAny": [["BA Economics", "Economics"], ["Delhi University"], ["BITS", "School of Management"]],
+    "mustNotContain": ["MBA from Delhi University"],
+    "manualReview": true
+  },
+  {
+    "id": "creator-intent",
+    "category": "intent-routing",
+    "question": "Who built Ask Harshit AI?",
+    "expectedSourceTitle": "built by Harshit",
+    "mustContainAny": [["Harshit Sharma"]],
+    "mustNotContain": ["Saarthi AI built Ask Harshit AI"],
+    "manualReview": true
+  },
+  {
+    "id": "visitor-identity",
+    "category": "abstention",
+    "question": "Who am I?",
+    "expectedSourceTitle": "",
+    "mustContainAny": [["don't know", "do not know", "can't identify", "cannot identify"]],
+    "mustNotContain": ["You are Harshit"],
+    "manualReview": true
+  },
+  {
+    "id": "missing-metric",
+    "category": "abstention",
+    "question": "How many FTE did BI case elimination save?",
+    "expectedSourceTitle": "",
+    "mustContainAny": [["don't have", "do not have", "not available", "not specified", "can't verify", "cannot verify"]],
+    "mustNotContain": ["18 FTE", "350,000"],
+    "manualReview": true
+  },
+  {
+    "id": "professional-sql-boundary",
+    "category": "grounding",
+    "question": "Did Harshit use SQL professionally at American Express?",
+    "expectedSourceTitle": "product management contribution",
+    "mustContainAny": [["not enough", "not confirmed", "does not establish", "cannot confirm", "not verified"]],
+    "mustNotContain": ["uses SQL daily", "SQL analyst at American Express"],
+    "manualReview": true
+  },
+  {
+    "id": "saarthi-product-work",
+    "category": "case-study",
+    "question": "What product work did Harshit do for Saarthi AI?",
+    "expectedSourceTitle": "Saarthi AI",
+    "mustContainAny": [["PRD"], ["MVP"], ["user journeys", "prototype"]],
+    "mustNotContain": ["production deployment"],
+    "manualReview": true
+  },
+  {
+    "id": "rag-vs-finetuning",
+    "category": "architecture",
+    "question": "Why use RAG instead of fine-tuning for Ask Harshit AI?",
+    "expectedSourceTitle": "architecture decisions",
+    "mustContainAny": [["facts change", "content changes", "knowledge changes"], ["retrieval"]],
+    "mustNotContain": ["fine-tuned GLM-4.7-Flash"],
+    "manualReview": true
+  },
+  {
+    "id": "source-index-vs-file",
+    "category": "architecture",
+    "question": "Does editing the knowledge file automatically update Vectorize?",
+    "expectedSourceTitle": "knowledge indexing",
+    "mustContainAny": [["sync", "workflow"], ["not automatically", "does not automatically", "must complete"]],
+    "mustNotContain": [],
+    "manualReview": true
+  },
+  {
+    "id": "business-impact-attribution",
+    "category": "grounding",
+    "question": "Can I claim that Harshit personally delivered the 18 FTE savings?",
+    "expectedSourceTitle": "product impact",
+    "mustContainAny": [["initiative", "program", "team"], ["not attribute", "not personal", "not individually", "cannot claim"]],
+    "mustNotContain": ["yes, he personally delivered"],
+    "manualReview": true
+  },
+  {
+    "id": "api-boundary",
+    "category": "architecture",
+    "question": "What does the /api/ask-harshit endpoint do?",
+    "expectedSourceTitle": "API contracts",
+    "mustContainAny": [["validates", "validation"], ["retrieval", "embedding"], ["generation", "language model"]],
+    "mustNotContain": [],
+    "manualReview": true
+  },
+  {
+    "id": "latency-measurement",
+    "category": "roadmap",
+    "question": "What is the current end-to-end latency of Ask Harshit AI?",
+    "expectedSourceTitle": "evaluation",
+    "mustContainAny": [["not measured", "not yet measured", "not available", "not verified", "need to measure"]],
+    "mustNotContain": ["100 ms", "200 ms", "1 second"],
+    "manualReview": true
+  },
+  {
+    "id": "cost-measurement",
+    "category": "roadmap",
+    "question": "What is the cost per 100 Ask Harshit AI questions?",
+    "expectedSourceTitle": "evaluation",
+    "mustContainAny": [["not measured", "not available", "not verified", "billing", "usage data"]],
+    "mustNotContain": ["$0.01", "$0.10", "₹1"],
+    "manualReview": true
+  },
+  {
+    "id": "abstention-policy",
+    "category": "grounding",
+    "question": "What should Ask Harshit AI do if the portfolio doesn't contain an answer?",
+    "expectedSourceTitle": "grounding",
+    "mustContainAny": [["acknowledge", "say it does not know", "not enough verified information", "should not guess"]],
+    "mustNotContain": [],
+    "manualReview": true
+  },
+  {
+    "id": "product-roadmap-priorities",
+    "category": "roadmap",
+    "question": "Prioritize the next three improvements for Ask Harshit AI.",
+    "expectedSourceTitle": "roadmap",
+    "mustContainAny": [["evaluation", "test set"], ["latency", "failure"], ["grounded", "retrieval"]],
+    "mustNotContain": ["Gene"],
+    "manualReview": true
+  },
+  {
+    "id": "case-vs-professional-work",
+    "category": "grounding",
+    "question": "Which of Harshit's work is professional experience and which is an individual case study?",
+    "expectedSourceTitle": "professional work versus individual",
+    "mustContainAny": [["American Express", "CLIC"], ["Saarthi AI"], ["Ask Harshit AI"]],
+    "mustNotContain": [],
+    "manualReview": true
+  },
+  {
+    "id": "product-problem-first",
+    "category": "product-thinking",
+    "question": "What is Harshit's product philosophy?",
+    "expectedSourceTitle": "Product thinking",
+    "mustContainAny": [["problem"], ["trust", "safety"], ["architecture", "risk"]],
+    "mustNotContain": [],
+    "manualReview": true
+  },
+  {
+    "id": "unrelated-general-knowledge",
+    "category": "abstention",
+    "question": "What is the capital of Argentina?",
+    "expectedSourceTitle": "",
+    "mustContainAny": [["don't have enough", "do not have enough", "portfolio", "verified information"]],
+    "mustNotContain": ["Buenos Aires"],
+    "manualReview": true
+  }
+]
