@@ -11,6 +11,14 @@ const delayMs = Number(process.env.ASK_HARSHIT_EVAL_DELAY_MS ?? 6500);
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const lower = (value) => String(value ?? "").toLowerCase();
 
+function parseServerTiming(header) {
+  const timings = {};
+  for (const match of String(header ?? "").matchAll(/([a-zA-Z0-9_-]+);dur=([\\d.]+)/g)) {
+    timings[match[1]] = Number(match[2]);
+  }
+  return timings;
+}
+
 function checkCase(test, answer, sources) {
   const text = lower(answer);
   const sourceText = lower((sources ?? []).map((source) => source.title).join(" | "));
@@ -58,6 +66,7 @@ for (let index = 0; index < cases.length; index += 1) {
   let sources = [];
   let status = 0;
   let error = "";
+  let serverTiming = {};
 
   try {
     const response = await fetch(endpoint, {
@@ -67,6 +76,7 @@ for (let index = 0; index < cases.length; index += 1) {
       signal: AbortSignal.timeout(30000),
     });
     status = response.status;
+    serverTiming = parseServerTiming(response.headers.get("server-timing"));
     const body = await response.json().catch(() => ({}));
     if (!response.ok) {
       error = body.error ?? `HTTP ${response.status}`;
@@ -89,6 +99,7 @@ for (let index = 0; index < cases.length; index += 1) {
     pass: checks.pass,
     status,
     latencyMs,
+    serverTiming,
     error,
     missingGroups: checks.missingGroups,
     forbidden: checks.forbidden,
@@ -127,9 +138,30 @@ const percentile = (p) =>
     ? sortedLatency[Math.min(sortedLatency.length - 1, Math.ceil(p * sortedLatency.length) - 1)]
     : 0;
 
+const serverTimingSummary = Object.fromEntries(
+  [...new Set(results.flatMap((result) => Object.keys(result.serverTiming)))].map((stage) => {
+    const values = results
+      .map((result) => result.serverTiming[stage])
+      .filter((value) => Number.isFinite(value))
+      .sort((a, b) => a - b);
+    const percentileForStage = (p) =>
+      values.length ? values[Math.min(values.length - 1, Math.ceil(p * values.length) - 1)] : 0;
+    return [
+      stage,
+      {
+        samples: values.length,
+        median: Number(percentileForStage(0.5).toFixed(1)),
+        p95: Number(percentileForStage(0.95).toFixed(1)),
+        max: Number(Math.max(0, ...values).toFixed(1)),
+      },
+    ];
+  }),
+);
+
 const report = {
   endpoint,
   totalCases: results.length,
+  serverTimingMs: serverTimingSummary,
   passed,
   failed: results.length - passed,
   requestErrors: failures,
@@ -154,6 +186,9 @@ await import("node:fs/promises").then(({ writeFile }) =>
 console.log("");
 console.log(`Summary: ${passed}/${results.length} passed (${report.passRatePercent}%).`);
 console.log(`Latency: median ${report.latencyMs.median}ms; p95 ${report.latencyMs.p95}ms; max ${report.latencyMs.max}ms.`);
+for (const [stage, metrics] of Object.entries(report.serverTimingMs)) {
+  console.log(`Server timing ${stage}: median ${metrics.median}ms; p95 ${metrics.p95}ms; max ${metrics.max}ms (${metrics.samples} samples).`);
+}
 console.log("Report written to ask-harshit-eval-report.json");
 console.log("Cost per 100 questions is intentionally not estimated by this script.");
 if (passed !== results.length) process.exitCode = 1;
