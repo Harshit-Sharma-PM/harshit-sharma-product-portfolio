@@ -38,12 +38,26 @@ function json(data: unknown, init: ResponseInit = {}) {
   });
 }
 
+const lexicalStopWords = new Set([
+  "about", "after", "again", "also", "am", "an", "and", "any", "are", "as", "at",
+  "be", "because", "been", "before", "being", "between", "but", "by", "can", "could",
+  "did", "do", "does", "doing", "down", "during", "each", "for", "from", "further",
+  "had", "has", "have", "having", "he", "her", "here", "hers", "him", "his", "how",
+  "i", "if", "in", "into", "is", "it", "its", "itself", "just", "me", "more", "most",
+  "my", "myself", "nor", "of", "off", "on", "once", "only", "or", "other", "our",
+  "ours", "out", "over", "own", "same", "she", "should", "so", "some", "such", "than",
+  "that", "the", "their", "theirs", "them", "then", "there", "these", "they", "this",
+  "those", "through", "to", "too", "under", "until", "up", "very", "was", "we", "were",
+  "what", "when", "where", "which", "while", "who", "whom", "why", "will", "with",
+  "would", "you", "your", "yours"
+]);
+
 function tokenize(text: string) {
   return text
     .toLowerCase()
     .replace(/[^a-z0-9\s]/g, " ")
     .split(/\s+/)
-    .filter((token) => token.length > 2);
+    .filter((token) => token.length > 2 && !lexicalStopWords.has(token));
 }
 
 function normalizePortfolioQuestion(text: string) {
@@ -354,7 +368,20 @@ export async function answerAskHarshit(request: Request, env: Env) {
     /(?:who|what).*(?:built|created|made|developed).*(?:you|yourself)/i.test(question) ||
     /(?:i['’]?m\s+not\s+asking|i\s+said)\s+(?:who|what).*(?:built|created|made|developed)/i.test(question);
 
-  if (assistantAuthorshipPattern) {
+  // A quoted authorship phrase can appear inside a question about a retrieval
+  // incident. That is not an identity request: let the incident's evidence
+  // reach normal retrieval instead of short-circuiting to the creator answer.
+  const isRetrievalIntentDiscussion =
+    /\b(?:retrieval|retrieved|retrieving|semantic similarity|intent routing)\b/i.test(question) &&
+    /\b(?:problem|issue|incident|teach|taught|lesson|learn|learning|failure|wrong topic|wrong answer)\b/i.test(question);
+
+  // BI case-elimination questions need their own evidence boundary so a
+  // semantically similar CBR impact chunk cannot leak into BI-specific answers.
+  const isBiCaseEliminationQuestion =
+    /\bbi\s+case\s+elimination\b/i.test(question) &&
+    !/\b(?:compare|versus|vs\.?|credit balance refund|cbr)\b/i.test(question);
+
+  if (assistantAuthorshipPattern && !isRetrievalIntentDiscussion) {
     const authorshipChunk = askHarshitKnowledge.find((chunk) => chunk.id === "ask-harshit-ai-built");
 
     if (authorshipChunk) {
@@ -399,6 +426,29 @@ export async function answerAskHarshit(request: Request, env: Env) {
     }
   }
 
+  // Keep the knowledge chunk for a known incident/topic available even if the
+  // embedding service ranks it below semantically similar but less useful text.
+  const isBusinessImpactAttributionQuestion =
+    /\b(?:18\s*fte|personally delivered|individual impact|claim.*saving|claim.*impact)\b/i.test(question) &&
+    /\b(?:personally|individual|claim|attribution|attribute)\b/i.test(question);
+  const forcedTopicChunkId = isRetrievalIntentDiscussion
+    ? "ask-harshit-case-study-iteration-learning"
+    : isBiCaseEliminationQuestion
+      ? "clic-bi-case-elimination"
+      : isBusinessImpactAttributionQuestion
+        ? "product-impact-evidence"
+        : null;
+  if (forcedTopicChunkId) {
+    const topicChunk = askHarshitKnowledge.find((chunk) => chunk.id === forcedTopicChunkId);
+    if (topicChunk) {
+      candidateMap.set(topicChunk.id, {
+        chunk: topicChunk,
+        semanticScore: candidateMap.get(topicChunk.id)?.semanticScore ?? 0,
+        lexicalScore: Math.max(lexicalScore(retrievalQuestion, topicChunk), 1),
+      });
+    }
+  }
+
   const candidates = Array.from(candidateMap.values());
   const normalizedQuestion = question.toLowerCase();
   const retrievalScopeText = (isFollowUp ? retrievalQuestion : question).toLowerCase();
@@ -439,6 +489,7 @@ export async function answerAskHarshit(request: Request, env: Env) {
     if (/\b(?:app controls?)\b/i.test(normalizedQuestion) && chunk.id === "app-controls") boost += 0.35;
     if (/\b(?:dpm|dispute payment management)\b/i.test(normalizedQuestion) && chunk.id === "dpm") boost += 0.35;
     if (/\b(?:what|which|kind|types?)\b/i.test(normalizedQuestion) && /product areas|key product areas/i.test(chunk.title)) boost += 0.30;
+    if (/\b(?:personally|individual|claim|attribution|attribute)\b/i.test(normalizedQuestion) && chunk.id === "product-impact-evidence") boost += 0.60;
     return boost;
   };
 
@@ -467,7 +518,18 @@ export async function answerAskHarshit(request: Request, env: Env) {
     });
   }
 
-  const rankedCandidates = entityCandidates.length ? entityCandidates : candidates;
+  const topicScopedCandidates = isRetrievalIntentDiscussion
+    ? entityCandidates.filter(({ chunk }) => chunk.id === "ask-harshit-case-study-iteration-learning")
+    : isBiCaseEliminationQuestion
+      ? entityCandidates.filter(({ chunk }) => chunk.id === "clic-bi-case-elimination")
+      : entityCandidates;
+
+  const rankedCandidates =
+    isRetrievalIntentDiscussion || isBiCaseEliminationQuestion
+      ? topicScopedCandidates
+      : entityCandidates.length
+        ? entityCandidates
+        : candidates;
 
   const retrieved = rankedCandidates
     .map((candidate) => ({
