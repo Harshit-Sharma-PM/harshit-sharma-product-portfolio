@@ -152,7 +152,7 @@ export function AskHarshitCaseStudy() {
 
         <Section id="measurement" number="06 / Measurement" label="Separate infrastructure telemetry from product quality." tone="ahi-dark">
           <h2>Regression-test every change; judge answer quality separately.</h2>
-          <p className="lead">The project now has a repeatable GitHub Actions evaluation suite with 32 saved questions: the original 31-case baseline plus a CLIC contribution case to check whether the assistant explains product execution, requirements, workflow analysis and BI case elimination—not only UAT tasks.</p>
+          <p className="lead">The evaluation suite contains 32 saved questions and runs through GitHub Actions. Alongside the original 31 regression cases, a CLIC-focused scenario assesses whether the assistant accurately represents documented product contributions, including requirements clarification, workflow analysis and BI case elimination. Automated checks inspect expected answer signals and source relevance; human review remains necessary to establish factual accuracy and completeness.</p>
           <div className="ahi-metrics">
             {metrics.map((metric, index) => <article key={metric.title}><span>{String(index + 1).padStart(2, "0")}</span><b>{metric.title}</b><p>{metric.description}</p></article>)}
           </div>
