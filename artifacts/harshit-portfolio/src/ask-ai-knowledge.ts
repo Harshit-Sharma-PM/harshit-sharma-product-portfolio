@@ -283,10 +283,10 @@ export const askHarshitKnowledge: KnowledgeChunk[] = [
   },
   {
     id: "ask-harshit-case-study-iteration-learning",
-    title: "Ask Harshit AI case study — implementation failures and iteration",
+    title: "Ask Harshit AI case study — retrieval and intent iteration",
     section: "Ask Harshit AI · Iteration",
     text:
-      "During Ask Harshit AI development, a Vectorize upsert format mismatch produced Cloudflare error 40023; the ingestion workflow was adapted to use newline-delimited JSON, with checks for embedding dimensions and per-stage logging. Another issue was retrieval relevance: a question such as 'Who built you?' could retrieve related content about Saarthi AI instead of the assistant's authorship. This illustrated that semantic similarity is not equivalent to intent correctness. The design direction included explicit handling for authorship and identity questions and consideration of lexical matching alongside semantic search. Questions such as 'Who am I?' also exposed ambiguity between the visitor and the portfolio owner. Describe these as observed failure modes and iteration directions; do not claim that a fix is fully validated without a test result.",
+      "A retrieval-quality issue occurred when a question about who built the assistant could retrieve related material about Saarthi AI instead of the assistant's authorship. This showed that semantic similarity is not the same as intent correctness. The implementation includes a dedicated authorship-intent rule and combines semantic retrieval with lexical evidence and topic boundaries. Visitor identity is handled separately: the assistant should not infer who a visitor is personally. These code paths still require regression testing; do not claim a measured accuracy improvement without evaluation results.",
   },
   {
     id: "ask-harshit-case-study-api-contracts",
@@ -308,5 +308,19 @@ export const askHarshitKnowledge: KnowledgeChunk[] = [
     section: "Ask Harshit AI · Product leadership",
     text:
       "The product-management contribution in Ask Harshit AI is to define the user problem and intended audience, formulate the product hypothesis, translate it into prioritized requirements, choose a lightweight architecture that fits the use case and cost constraints, understand service boundaries and data contracts, investigate retrieval and ingestion failures, and define an evidence-based evaluation plan. The story should emphasize decisions and reasoning: why grounded portfolio retrieval matters, why knowledge updates should be separate from model training, why retrieval and generation must be evaluated independently, and why targets must be separated from achieved outcomes. It is an individual portfolio build and learning project, not an enterprise production deployment or a claim of training a foundation model from scratch.",
+  },
+{
+    id: "ask-harshit-vectorize-ingestion-incident",
+    title: "Ask Harshit AI — Vectorize ingestion incident",
+    section: "Ask Harshit AI · Reliability",
+    text:
+      "During knowledge indexing, a Cloudflare Vectorize upsert payload format mismatch produced error 40023. The ingestion request was changed to newline-delimited JSON (NDJSON). The sync script validates that each BGE-small embedding has 384 dimensions, includes the chunk ID and metadata, logs per-chunk progress, and reports a successful upsert only after the Cloudflare API call completes. This ingestion incident is separate from retrieval-quality issues. Do not conflate the NDJSON format fix with authorship-question retrieval, and do not claim the ingestion workflow guarantees answer correctness.",
+  },
+  {
+    id: "ask-harshit-case-study-roadmap-and-feature-boundaries",
+    title: "Ask Harshit AI — limitations and prioritized product roadmap",
+    section: "Ask Harshit AI · Roadmap",
+    text:
+      "Current documented capabilities include portfolio-grounded RAG, BGE-small query embeddings, Cloudflare Vectorize semantic retrieval, lexical retrieval, topic-boundary filtering, follow-up query resolution, dedicated handling for visitor identity and assistant authorship, source-title display, and a GitHub Actions knowledge-index sync. These capabilities still require regression testing. Not established as implemented features are autonomous tool use, multi-step actions on behalf of visitors, a verified end-to-end quality benchmark, a production analytics dashboard, or measured cost-per-100-question reporting. Do not introduce feature names or capabilities that are absent from verified product evidence. Prioritized next steps are: (1) build a manually labeled 30–50 question evaluation set; (2) test retrieval relevance, grounded answers, abstention, topic routing and critical unsupported claims; (3) record end-to-end latency and API failures; (4) estimate cost using Cloudflare AI usage and billing data rather than guessing from response payloads; (5) improve retrieval, prompts or routing based on observed failures; and (6) consider tool use only if a validated user need justifies its cost and risk. The proposed target of at least 90% grounded-answer correctness is a target to test, not a measured result.",
   },
 ];

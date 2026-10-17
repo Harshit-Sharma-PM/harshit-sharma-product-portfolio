@@ -205,7 +205,7 @@ export function AskHarshitFloatingChat() {
                     <div className="ask-ai-content">{renderMarkdown(message.content)}</div>
                     {message.sources?.length ? (
                       <div className="ask-ai-sources">
-                        <span className="ask-ai-sources-label">Sources</span>
+                        <span className="ask-ai-sources-label">Sources:</span>
                         {message.sources.map((source, sourceIndex) => (
                           <span className="ask-ai-source-chip" key={sourceIndex}>{source.title}</span>
                         ))}
