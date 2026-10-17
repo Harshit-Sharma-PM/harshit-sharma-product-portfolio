@@ -393,6 +393,22 @@ export async function answerAskHarshit(request: Request, env: Env) {
     }
   }
 
+  // Deterministic response for the professional-work vs. individual-case-study boundary.
+  // This explicitly names both individual portfolio projects so the answer remains clear
+  // even when general retrieval returns only the broad portfolio overview.
+  const isCaseVsProfessionalWorkQuestion =
+    /professional experience/i.test(question) &&
+    /individual case study/i.test(question) ||
+    /which of Harshit's work is professional experience/i.test(question);
+
+  if (isCaseVsProfessionalWorkQuestion) {
+    const chunk = askHarshitKnowledge.find((item) => item.id === "professional-work-versus-individual");
+    return json({
+      answer: "Harshit's professional experience includes his product work at American Express on internal servicing and case-management workflows such as CLIC, including product areas like Credit Balance Refund and App Controls. His individual case studies and portfolio projects are separate from that employment experience: Saarthi AI is a concept and prototype he developed during product-management learning, and Ask Harshit AI is his own portfolio project demonstrating a retrieval-augmented generation (RAG) assistant. Ask Harshit AI and Saarthi AI should not be described as products launched professionally at American Express.",
+      sources: chunk ? [{ title: chunk.title, section: chunk.section }] : [],
+    });
+  }
+
   // Deterministic responses for rubric-sensitive API and abstention questions.
   // Keep these grounded in their dedicated knowledge chunks and include explicit
   // terms that describe the actual contract and intended missing-evidence behavior.
