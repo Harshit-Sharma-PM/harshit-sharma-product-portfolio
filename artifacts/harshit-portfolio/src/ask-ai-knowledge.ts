@@ -188,4 +188,125 @@ export const askHarshitKnowledge: KnowledgeChunk[] = [
     text:
       "Harshit studied BA Economics at Delhi University and completed a BITS School of Management program in Product Management with Generative and Agentic AI. This is the education background represented in his portfolio.",
   },
+  {
+    id: "amex-product-management-contribution",
+    title: "American Express — product management contribution and scope",
+    section: "Professional experience · Product delivery",
+    text:
+      "Harshit’s American Express experience is product-driven and sits across understanding operational workflows, clarifying requirements, validating product behavior, identifying edge cases, supporting UAT, defect triage and retesting, and helping establish release readiness. His current role is Associate Digital Product Management. He works around internal products used by front-line colleagues, especially case-management and customer-servicing workflows. Describe his role as contributing to product discovery and delivery through workflow understanding, requirement validation, quality and launch readiness; do not imply he owns the entire platform or every stage of delivery.",
+  },
+  {
+    id: "amex-product-technical-bridge",
+    title: "Product management meets technical architecture at American Express",
+    section: "Professional experience · Product and engineering collaboration",
+    text:
+      "Harshit’s product-oriented technical understanding includes following a requirement through the delivery lifecycle: business requirement, user story, test data, test scenario, execution, defect logging, retest and sign-off. In internal case-management workflows, validation can involve staging environments, feed files, scheduled jobs, API-dependent outcomes and observability logs. His value is connecting the intended business behavior to testable acceptance outcomes, identifying edge cases and communicating defects clearly to engineering and business stakeholders. Do not claim software engineering ownership or professional SQL/data-analysis work unless separately confirmed for the specific answer.",
+  },
+  {
+    id: "cbr-business-outcomes",
+    title: "Credit Balance Refund — reported automation business outcomes",
+    section: "Professional experience · Business impact",
+    text:
+      "A GS Automation Acceleration launch announcement for UK proactive and reactive Credit Balance Refund (CBR) reported approximately 60% automation, approximately 350,000 annual cases, and approximately 18 FTE in annualized savings. The announcement described automation increasing from approximately 1–2% to around 60%. These figures describe the broader initiative and its reported business outcomes; they are not an individually attributable impact metric for Harshit. Preserve the UK scope when using these numbers. Do not assign these figures to the separate France, Germany and Austria launch context without evidence.",
+  },
+
+  {
+    id: "cbr-product-workflow",
+    title: "Credit Balance Refund — workflow and product validation",
+    section: "Professional experience · Product workflow",
+    text:
+      "Credit Balance Refund (CBR) is an operational workflow that can include credit-balance identification, eligibility checks, bank or direct-debit validation, due-diligence and exception handling, and refund processing. Harshit’s relevant product/UAT context includes understanding the workflow, validating expected outcomes and exceptions in staging, supporting app-control requirements, and checking case-generation behavior and observability logs where applicable. Engineering teams may generate large feed files to exercise eligibility scenarios; this should be framed as test-scenario validation, not as Harshit building the underlying production integrations.",
+  },
+  {
+    id: "clic-bi-case-elimination",
+    title: "CLIC — BI case elimination and inventory governance",
+    section: "Professional experience · Product problem solving",
+    text:
+      "BI case elimination addressed draft or incomplete cases created in CLIC that could create inventory-governance issues. These intermediate cases could lack clear ownership and create operational risk, with possible downstream financial, regulatory or customer impact. The product direction was to define workflow rules that prevent incomplete or invalid submissions from creating unnecessary BI cases, improving case quality and inventory governance. When discussing Harshit’s involvement, focus on understanding the operational problem, validating workflow behavior and checking that incomplete submissions do not create unwanted cases; do not invent quantified savings or claim sole ownership of the solution.",
+  },
+  {
+    id: "clic-observability-validation",
+    title: "CLIC — validation, integrations and observability",
+    section: "Professional experience · Technical product understanding",
+    text:
+      "In the CLIC and Credit Balance Refund context, product validation can span staging workflows, application controls, generated feed files, scheduled processing and logs in the ELF observability platform. API integrations and automated screening may participate in the wider refund workflow. The product-management value is to connect requirements to observable outcomes, cover exception paths, use evidence to investigate unexpected behavior, and communicate actionable defects. Avoid claiming Harshit personally built the APIs, integrations, screening services or observability platform.",
+  },
+  {
+    id: "product-impact-evidence",
+    title: "How Harshit frames product impact credibly",
+    section: "Product philosophy · Evidence-led communication",
+    text:
+      "Harshit’s product narrative separates three things: (1) his own contribution, such as workflow analysis, requirement clarification, UAT, exception validation, defect triage and launch readiness; (2) the broader initiative’s business outcomes, such as the CBR launch announcement’s approximately 60% automation, 350K annual cases and 18 annualized FTE savings; and (3) proposed or unmeasured benefits, which must be labeled as hypotheses or targets. Do not turn a team or program outcome into a personal achievement, imply causality without evidence, or invent impact metrics for App Controls, DPM, CLIC or BI case elimination.",
+  },
+  {
+    id: "product-manager-interview-narrative",
+    title: "Product Manager interview narrative — operational products",
+    section: "Product positioning · Interview support",
+    text:
+      "For Product Manager interviews, Harshit can explain his experience through a product lens: identify the operational user and pain point; map the current workflow and failure states; translate requirements into testable acceptance criteria; align business intent with engineering implementation; validate happy paths and exceptions; use defects and logs to understand gaps; and support launch readiness. His strongest examples involve internal platforms, case management, customer servicing, CBR workflow validation, application controls and BI case elimination. Be precise about his level of ownership and distinguish operational product experience from his individual AI case-study/prototype work.",
+  },
+  {
+    id: "professional-work-vs-case-studies",
+    title: "Professional work versus individual AI case studies",
+    section: "Grounding and credibility",
+    text:
+      "Keep professional American Express product/UAT experience separate from individual portfolio case studies. CLIC, Credit Balance Refund, App Controls, Dispute Payment Management and BI case elimination are professional-work contexts. Ask Harshit AI is an individual portfolio assistant build. Saarthi AI is an individual 0-to-1 concept and prototype supported by product strategy, PRD, MVP definition, user journeys and proposed AI architecture; it is not a claimed production launch. Do not present prototype assumptions or proposed architecture as measured production outcomes.",
+  },
+
+{
+    id: "ask-harshit-case-study-user-problem",
+    title: "Ask Harshit AI case study — user problem and job to be done",
+    section: "Ask Harshit AI · Product strategy",
+    text:
+      "Ask Harshit AI addresses information-discovery friction in a static product portfolio. Recruiters, hiring managers and product leaders may want specific details about Harshit's experience, product decisions, technical understanding or case studies without manually scanning every page. The product hypothesis is that a portfolio-specific conversational assistant grounded in curated evidence can make relevant information easier to discover. The core job to be done is: when evaluating a candidate, help me quickly find specific, relevant evidence about their experience and projects so I can make a better-informed assessment. This is a hypothesis to validate, not a proven increase in recruiter conversion or hiring outcomes.",
+  },
+  {
+    id: "ask-harshit-case-study-online-architecture",
+    title: "Ask Harshit AI case study — online RAG architecture",
+    section: "Ask Harshit AI · Architecture",
+    text:
+      "The documented online Ask Harshit AI flow is: visitor submits a question in the React and Vite interface; the frontend calls the server-side POST /api/ask-harshit endpoint; the backend validates and embeds the question using BGE-small; Cloudflare Vectorize retrieves semantically relevant knowledge chunks; the backend assembles the question and retrieved evidence into a prompt; the configured language model generates a natural-language response; the API returns a response for the interface to render. Vectorize performs retrieval, not answer generation. The language model generates the response, and its factual reliability depends in part on the evidence retrieved and the instructions provided.",
+  },
+  {
+    id: "ask-harshit-case-study-indexing-pipeline",
+    title: "Ask Harshit AI case study — offline knowledge indexing",
+    section: "Ask Harshit AI · Data pipeline",
+    text:
+      "The offline indexing workflow imports curated KnowledgeChunk records from the version-controlled ask-ai-knowledge.ts file. For each chunk, the sync script embeds the chunk title, section and text with Cloudflare Workers AI BGE-small, validates that the vector has 384 dimensions, attaches the title, section and text as metadata, and upserts the vectors into the Cloudflare Vectorize index named ask-harshit-ai using newline-delimited JSON. A GitHub Actions workflow is configured to run the sync on changes to the knowledge source when those changes reach a configured trigger branch, and can also be manually dispatched. Editing the TypeScript knowledge file alone does not update the live index; the sync job must complete successfully. Never claim an upsert succeeded without checking the workflow result.",
+  },
+  {
+    id: "ask-harshit-case-study-architecture-tradeoffs",
+    title: "Ask Harshit AI case study — architecture decisions and trade-offs",
+    section: "Ask Harshit AI · Technical product decisions",
+    text:
+      "Ask Harshit AI uses RAG rather than fine-tuning because portfolio facts change and should be updated independently of model parameters. BGE-small provides compact 384-dimensional text embeddings; Cloudflare Vectorize stores and searches the embeddings; a server-side Pages Function coordinates request validation, retrieval and generation; GitHub Actions makes indexing repeatable. These choices aim to keep the implementation lightweight and cost-conscious. Trade-offs remain: semantic similarity can retrieve the wrong fact, a stale index can disagree with the source file, model responses can still hallucinate, serverless execution has platform limits, and each integration introduces a potential failure point. These are architectural trade-offs, not proof that every failure mode has been eliminated.",
+  },
+  {
+    id: "ask-harshit-case-study-iteration-learning",
+    title: "Ask Harshit AI case study — implementation failures and iteration",
+    section: "Ask Harshit AI · Iteration",
+    text:
+      "During Ask Harshit AI development, a Vectorize upsert format mismatch produced Cloudflare error 40023; the ingestion workflow was adapted to use newline-delimited JSON, with checks for embedding dimensions and per-stage logging. Another issue was retrieval relevance: a question such as 'Who built you?' could retrieve related content about Saarthi AI instead of the assistant's authorship. This illustrated that semantic similarity is not equivalent to intent correctness. The design direction included explicit handling for authorship and identity questions and consideration of lexical matching alongside semantic search. Questions such as 'Who am I?' also exposed ambiguity between the visitor and the portfolio owner. Describe these as observed failure modes and iteration directions; do not claim that a fix is fully validated without a test result.",
+  },
+  {
+    id: "ask-harshit-case-study-api-contracts",
+    title: "Ask Harshit AI case study — API contracts and failure boundaries",
+    section: "Ask Harshit AI · API integration",
+    text:
+      "The frontend and backend are separated by a server-side POST /api/ask-harshit endpoint. The backend is responsible for request validation and orchestration across embedding, vector retrieval, prompt construction and language-model generation. Important contracts include valid request shape, acceptable question length, the 384-dimensional embedding expected by the vector index, metadata containing retrievable text, and a response shape the frontend can render. Potential failures include malformed input, embedding failure, vector search failure, empty or irrelevant retrieval, generation timeout and malformed output. Good product behavior requires graceful errors and diagnosable stages rather than treating the workflow as one opaque AI call. Example request and response payloads in the case study are illustrative unless explicitly captured from the live endpoint.",
+  },
+  {
+    id: "ask-harshit-case-study-evaluation-plan",
+    title: "Ask Harshit AI case study — evaluation and success metrics",
+    section: "Ask Harshit AI · Measurement",
+    text:
+      "Ask Harshit AI has a proposed evaluation plan, not a verified published benchmark. Create a manually labeled set of approximately 30–50 questions covering professional facts, project details, ambiguous identity questions, multi-topic queries and facts intentionally absent from the knowledge base. Evaluate retrieval relevance, grounded answer correctness, abstention quality, intent-routing accuracy, end-to-end latency, API failure rate and cost per 100 questions. A proposed target of at least 90% grounded answer correctness is an acceptance criterion to test, not an achieved result. Track critical unsupported claims separately. Infrastructure vector-query counts or query latency are not substitutes for answer accuracy or end-to-end user-perceived latency.",
+  },
+  {
+    id: "ask-harshit-case-study-product-contribution",
+    title: "Ask Harshit AI case study — product management contribution",
+    section: "Ask Harshit AI · Product leadership",
+    text:
+      "The product-management contribution in Ask Harshit AI is to define the user problem and intended audience, formulate the product hypothesis, translate it into prioritized requirements, choose a lightweight architecture that fits the use case and cost constraints, understand service boundaries and data contracts, investigate retrieval and ingestion failures, and define an evidence-based evaluation plan. The story should emphasize decisions and reasoning: why grounded portfolio retrieval matters, why knowledge updates should be separate from model training, why retrieval and generation must be evaluated independently, and why targets must be separated from achieved outcomes. It is an individual portfolio build and learning project, not an enterprise production deployment or a claim of training a foundation model from scratch.",
+  },
 ];
